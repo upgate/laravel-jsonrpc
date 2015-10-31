@@ -1,0 +1,18 @@
+{
+    "name": "upgate/laravel-jsonrpc",
+    "description": "Laravel JSON-RPC 2.0 Adapter",
+    "keywords": [
+        "laravel",
+        "json-rpc"
+    ],
+    "license": "MIT",
+    "require": {
+        "php": ">=5.5.0",
+        "illuminate/support": "5.1.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Upgate\\LaravelJsonRpc\\": "src"
+        }
+    }
+}
