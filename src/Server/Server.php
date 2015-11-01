@@ -4,9 +4,9 @@ namespace Upgate\LaravelJsonRpc\Server;
 
 use Illuminate\Http\JsonResponse;
 use Psr\Log\LoggerInterface;
-use Illuminate\Http\Request as HttpRequest;
 use Upgate\LaravelJsonRpc\Contract\Request;
-use Upgate\LaravelJsonRpc\Contract\RequestDispatcher;
+use Upgate\LaravelJsonRpc\Contract\RouteDispatcher;
+use Upgate\LaravelJsonRpc\Contract\MiddlewareDispatcher;
 use Upgate\LaravelJsonRpc\Contract\RequestExecutor;
 use Upgate\LaravelJsonRpc\Contract\RequestFactory;
 use Upgate\LaravelJsonRpc\Contract\RouteRegistry;
@@ -33,9 +33,14 @@ class Server implements ServerContract, RequestExecutor
     private $router;
 
     /**
-     * @var RequestDispatcher
+     * @var RouteDispatcher
      */
-    private $dispatcher;
+    private $routeDispatcher;
+
+    /**
+     * @var MiddlewareDispatcher
+     */
+    private $middlewareDispatcher;
 
     /**
      * @var LoggerInterface
@@ -47,20 +52,19 @@ class Server implements ServerContract, RequestExecutor
      */
     private $exceptionHandlers = [];
 
-    /**
-     * @var HttpRequest
-     */
-    private $httpRequest = null;
+    private $middlewareContext = null;
 
     public function __construct(
         RequestFactory $requestFactory,
         RouteRegistry $router,
-        RequestDispatcher $dispatcher,
+        RouteDispatcher $routeDispatcher,
+        MiddlewareDispatcher $middlewareDispatcher,
         LoggerInterface $logger
     ) {
         $this->requestFactory = $requestFactory;
         $this->router = $router;
-        $this->dispatcher = $dispatcher;
+        $this->routeDispatcher = $routeDispatcher;
+        $this->middlewareDispatcher = $middlewareDispatcher;
         $this->logger = $logger;
     }
 
@@ -91,12 +95,12 @@ class Server implements ServerContract, RequestExecutor
     }
 
     /**
-     * @param HttpRequest $httpRequest
+     * @param null $middlewareContext
      * @return JsonResponse
      */
-    public function run(HttpRequest $httpRequest)
+    public function run($middlewareContext = null)
     {
-        $this->httpRequest = $httpRequest;
+        $this->middlewareContext = $middlewareContext;
 
         if (null === $this->payload) {
             $payload = file_get_contents('php://input');
@@ -113,14 +117,15 @@ class Server implements ServerContract, RequestExecutor
      */
     public function execute(Request $request)
     {
-        if (!$this->httpRequest) {
-            throw new \LogicException('HttpRequest is undefined');
-        }
         try {
-            $result = $this->dispatcher->dispatch(
-                $this->router->resolve($request->getMethod()),
-                $request,
-                $this->httpRequest
+            $route = $this->router->resolve($request->getMethod());
+
+            $result = $this->middlewareDispatcher->dispatch(
+                $route->getMiddlewaresCollection(),
+                $this->middlewareContext,
+                function () use ($route, $request) {
+                    return $this->routeDispatcher->dispatch($route, $request->getParams());
+                }
             );
 
             return $request->getId() ? new RequestResponse($request->getId(), $result) : null;

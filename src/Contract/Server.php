@@ -3,7 +3,6 @@
 namespace Upgate\LaravelJsonRpc\Contract;
 
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request as HttpRequest;
 
 interface Server
 {
@@ -15,9 +14,9 @@ interface Server
     public function setPayload($payload);
 
     /**
-     * @param HttpRequest $httpRequest
+     * @param $middlewareContext
      * @return JsonResponse
      */
-    public function run(HttpRequest $httpRequest);
+    public function run($middlewareContext = null);
 
 }
