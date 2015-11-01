@@ -24,16 +24,16 @@ final class MiddlewareDispatcher implements MiddlewareDispatcherContract
     }
 
     /**
-     * @param MiddlewaresConfiguration $middlewares
+     * @param MiddlewaresConfiguration $middlewaresConfiguration
      * @param $context
      * @param callable $next
      * @return mixed
      */
-    public function dispatch(MiddlewaresConfiguration $middlewares, $context, callable $next)
+    public function dispatch(MiddlewaresConfiguration $middlewaresConfiguration, $context, callable $next)
     {
         $pipeline = new Pipeline($this->container);
 
-        return $pipeline->send($context)->through($middlewares)->then($next);
+        return $pipeline->send($context)->through($middlewaresConfiguration->getMiddlewares())->then($next);
     }
 
 }
