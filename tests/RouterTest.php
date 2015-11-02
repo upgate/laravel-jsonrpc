@@ -24,7 +24,6 @@ class RouterTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('index', $route->getActionName());
     }
 
-
     public function testControllerBinding()
     {
         $router = new Router();
