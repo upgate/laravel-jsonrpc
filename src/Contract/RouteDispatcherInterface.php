@@ -14,4 +14,10 @@ interface RouteDispatcherInterface
      */
     public function dispatch(RouteInterface $route, RequestParams $requestParams = null);
 
+    /**
+     * @param string|null $controllerNamespace
+     * @return $this
+     */
+    public function setControllerNamespace($controllerNamespace = null);
+
 }

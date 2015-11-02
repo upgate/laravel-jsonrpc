@@ -30,7 +30,17 @@ final class RouteDispatcher implements RouteDispatcherInterface
     public function __construct(Container $container, $controllerNamespace = null)
     {
         $this->container = $container;
+        $this->setControllerNamespace($controllerNamespace);
+    }
+
+    /**
+     * @param string|null $controllerNamespace
+     * @return $this
+     */
+    public function setControllerNamespace($controllerNamespace = null)
+    {
         $this->controllerNamespace = $controllerNamespace ? (string)$controllerNamespace : null;
+        return $this;
     }
 
     /**

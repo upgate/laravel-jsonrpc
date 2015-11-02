@@ -27,6 +27,12 @@ interface ServerInterface
     public function setPayload($payload);
 
     /**
+     * @param string|null $controllerNamespace
+     * @return $this
+     */
+    public function setControllerNamespace($controllerNamespace = null);
+
+    /**
      * @param $middlewareContext
      * @return JsonResponse
      */

@@ -94,6 +94,17 @@ class Server implements ServerContract, RequestExecutorInterface
     }
 
     /**
+     * @param string|null $controllerNamespace
+     * @return $this
+     */
+    public function setControllerNamespace($controllerNamespace = null)
+    {
+        $this->routeDispatcher->setControllerNamespace($controllerNamespace);
+
+        return $this;
+    }
+
+    /**
      * @param string $payload
      * @return void
      */

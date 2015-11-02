@@ -252,7 +252,8 @@ class RouteDispatcherTest extends PHPUnit_Framework_TestCase
             }
         ');
 
-        $routeDispatcher = new RouteDispatcher($container, 'RouteDispatcherTestNs');
+        $routeDispatcher = new RouteDispatcher($container);
+        $routeDispatcher->setControllerNamespace('RouteDispatcherTestNs');
         $result = $routeDispatcher->dispatch($route, RequestParams::constructPositional([100500]));
         $this->assertEquals(100500, $result);
     }

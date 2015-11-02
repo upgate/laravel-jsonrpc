@@ -240,6 +240,44 @@ class ServerTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($expectedResponseData, json_decode($response->getContent()));
     }
 
+    public function testControllerNamespace()
+    {
+        eval('
+            namespace ServerTestNs {
+                class ServerTest_FooController {
+                    public function index() {
+                        return ["ns_foo_index" => true];
+                    }
+                }
+            }
+        ');
+
+        $server = $this->assembleServer();
+
+        $server->setControllerNamespace('ServerTestNs');
+
+        $server->router()->bindController('foo', 'ServerTest_FooController');
+
+        $server->setPayload(
+            json_encode(
+                [
+                    'jsonrpc' => '2.0',
+                    'method'  => 'foo',
+                    'id'      => 1
+                ]
+            )
+        );
+
+        $response = $server->run();
+
+        $expectedResponseData = (object)[
+            'jsonrpc' => '2.0',
+            'result'  => (object)['ns_foo_index' => true],
+            'id'      => 1
+        ];
+        $this->assertEquals($expectedResponseData, json_decode($response->getContent()));
+    }
+
     private function assembleServer()
     {
         return new Server\Server(
