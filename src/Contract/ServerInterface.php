@@ -8,6 +8,19 @@ interface ServerInterface
 {
 
     /**
+     * @return RouteRegistryInterface
+     */
+    public function router();
+
+    /**
+     * @param string $exceptionClass
+     * @param callable $handler
+     * @param bool $first
+     * @return $this
+     */
+    public function onException($exceptionClass, $handler, $first = false);
+
+    /**
      * @param string $payload
      * @return void
      */
