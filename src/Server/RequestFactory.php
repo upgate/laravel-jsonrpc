@@ -8,6 +8,10 @@ use Upgate\LaravelJsonRpc\Exception\BadRequestException;
 class RequestFactory implements RequestFactoryContract
 {
 
+    /**
+     * @param string $payloadJson
+     * @return Request|array
+     */
     public function createFromPayload($payloadJson)
     {
         try {
