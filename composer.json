@@ -1,6 +1,6 @@
 {
     "name": "upgate/laravel-jsonrpc",
-    "description": "Laravel JSON-RPC 2.0 Adapter",
+    "description": "Laravel JSON-RPC 2.0 Server",
     "keywords": [
         "laravel",
         "json-rpc"
