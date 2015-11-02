@@ -48,14 +48,18 @@ final class Router implements RouteRegistry
     }
 
     /**
-     * @param callable $middlewaresConfigurator
+     * @param callable|null $middlewaresConfigurator
      * @param callable $routesConfigurator
      */
-    public function group(callable $middlewaresConfigurator, callable $routesConfigurator)
+    public function group(callable $middlewaresConfigurator = null, callable $routesConfigurator)
     {
-        $middlewaresCollection = $middlewaresConfigurator($this->middlewaresCollection);
-        $subrouter = $routesConfigurator(new self($middlewaresCollection));
-        $this->mergeBindingsFrom($subrouter);
+        $middlewaresSubcollection = $this->middlewaresCollection ? clone $this->middlewaresCollection : null;
+        if ($middlewaresConfigurator) {
+            $middlewaresSubcollection = $middlewaresConfigurator($middlewaresSubcollection)
+                ?: $middlewaresSubcollection;
+        }
+        $subrouter = new self($middlewaresSubcollection);
+        $this->mergeBindingsFrom($routesConfigurator($subrouter) ?: $subrouter);
     }
 
     protected function mergeBindingsFrom(Router $router)
