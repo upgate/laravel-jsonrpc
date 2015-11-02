@@ -4,7 +4,6 @@ namespace Upgate\LaravelJsonRpc\Server;
 
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
-use Upgate\LaravelJsonRpc\Exception\JsonRpcException;
 
 final class RequestResponse implements Jsonable, Arrayable
 {
@@ -15,31 +14,42 @@ final class RequestResponse implements Jsonable, Arrayable
 
     /**
      * @param string|int $id
-     * @param JsonRpcException $exception
+     * @param \Exception $exception
      * @return RequestResponse
      */
-    public static function constructErrorResponse($id, JsonRpcException $exception)
+    public static function constructExceptionErrorResponse($id, \Exception $exception)
     {
-        $self = new self(
+        return self::constructErrorResponse($id, $exception->getMessage(), $exception->getCode());
+    }
+
+    /**
+     * @param string|int $id
+     * @param string $message
+     * @param int $code
+     * @return RequestResponse
+     */
+    public static function constructErrorResponse($id, $message, $code = 0)
+    {
+        return new self(
             $id,
             [
-                'code'    => $exception->getCode(),
-                'message' => $exception->getMessage()
-            ]
+                'code'    => $code ?: -32603,
+                'message' => (string)$message
+            ],
+            true
         );
-        $self->isError = true;
-
-        return $self;
     }
 
     /**
      * @param string|int $id
      * @param mixed $result
+     * @param bool $isError
      */
-    public function __construct($id, $result)
+    public function __construct($id, $result, $isError = false)
     {
         $this->id = $id;
         $this->result = $result;
+        $this->isError = (bool)$isError;
     }
 
     /**

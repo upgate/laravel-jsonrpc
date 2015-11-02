@@ -2,12 +2,13 @@
 
 namespace Upgate\LaravelJsonRpc\Server;
 
+use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
-use Upgate\LaravelJsonRpc\Contract\Executable;
-use Upgate\LaravelJsonRpc\Contract\RequestExecutor;
-use Upgate\LaravelJsonRpc\Contract\RequestFactory;
+use Upgate\LaravelJsonRpc\Contract\ExecutableInterface;
+use Upgate\LaravelJsonRpc\Contract\RequestExecutorInterface;
+use Upgate\LaravelJsonRpc\Contract\RequestFactoryInterface;
 
-class Batch implements Executable
+final class Batch implements ExecutableInterface, Arrayable
 {
 
     private $batch;
@@ -15,19 +16,19 @@ class Batch implements Executable
 
     /**
      * @param array $batch
-     * @param RequestFactory $requestFactory
+     * @param RequestFactoryInterface $requestFactory
      */
-    public function __construct(array $batch, RequestFactory $requestFactory)
+    public function __construct(array $batch, RequestFactoryInterface $requestFactory)
     {
         $this->batch = $batch;
         $this->requestFactory = $requestFactory;
     }
 
     /**
-     * @param RequestExecutor $executor
+     * @param RequestExecutorInterface $executor
      * @return Jsonable|null
      */
-    public function executeWith(RequestExecutor $executor)
+    public function executeWith(RequestExecutorInterface $executor)
     {
         /** @var Request[] $requests */
         $requests = array_map(function($requestData) {
@@ -45,4 +46,15 @@ class Batch implements Executable
 
         return $response;
     }
+
+    /**
+     * Get the instance as an array.
+     *
+     * @return array
+     */
+    public function toArray()
+    {
+        return $this->batch;
+    }
+
 }

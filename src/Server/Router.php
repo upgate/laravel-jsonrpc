@@ -2,11 +2,11 @@
 
 namespace Upgate\LaravelJsonRpc\Server;
 
-use Upgate\LaravelJsonRpc\Contract\Route as RouteContract;
-use Upgate\LaravelJsonRpc\Contract\RouteRegistry;
+use Upgate\LaravelJsonRpc\Contract\RouteInterface as RouteContract;
+use Upgate\LaravelJsonRpc\Contract\RouteRegistryInterface;
 use Upgate\LaravelJsonRpc\Exception\RouteNotFoundException;
 
-final class Router implements RouteRegistry
+final class Router implements RouteRegistryInterface
 {
 
     /**
@@ -29,15 +29,19 @@ final class Router implements RouteRegistry
     /**
      * @param string $method
      * @param string $binding
+     * @return $this
      */
     public function bind($method, $binding)
     {
         $this->methodBindings[strtolower($method)] = new MethodBinding($binding, $this->middlewaresCollection);
+
+        return $this;
     }
 
     /**
      * @param string $namespace
      * @param string $controller
+     * @return $this
      */
     public function bindController($namespace, $controller)
     {
@@ -45,11 +49,14 @@ final class Router implements RouteRegistry
             $controller,
             $this->middlewaresCollection
         );
+
+        return $this;
     }
 
     /**
      * @param callable|null $middlewaresConfigurator
      * @param callable $routesConfigurator
+     * @return $this
      */
     public function group(callable $middlewaresConfigurator = null, callable $routesConfigurator)
     {
@@ -60,12 +67,8 @@ final class Router implements RouteRegistry
         }
         $subrouter = new self($middlewaresSubcollection);
         $this->mergeBindingsFrom($routesConfigurator($subrouter) ?: $subrouter);
-    }
 
-    protected function mergeBindingsFrom(Router $router)
-    {
-        $this->methodBindings = $router->methodBindings + $this->methodBindings;
-        $this->controllerBindings = $router->controllerBindings + $this->controllerBindings;
+        return $this;
     }
 
     /**
@@ -75,6 +78,29 @@ final class Router implements RouteRegistry
     public function resolve($method)
     {
         return $this->findBinding($method)->resolveRoute($method);
+    }
+
+    /**
+     * @param array|string $middleware
+     * @return $this
+     */
+    public function addMiddleware($middleware)
+    {
+        $middlewares = (array)$middleware;
+        foreach ($middlewares as $middleware) {
+            $this->middlewaresCollection->addMiddleware($middleware);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @param Router $router
+     */
+    private function mergeBindingsFrom(Router $router)
+    {
+        $this->methodBindings = $router->methodBindings + $this->methodBindings;
+        $this->controllerBindings = $router->controllerBindings + $this->controllerBindings;
     }
 
     /**

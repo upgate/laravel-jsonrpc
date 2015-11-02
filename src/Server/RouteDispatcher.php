@@ -5,12 +5,12 @@ namespace Upgate\LaravelJsonRpc\Server;
 use Illuminate\Contracts\Container\Container;
 use ReflectionException;
 use ReflectionMethod;
-use Upgate\LaravelJsonRpc\Contract\RouteDispatcher as RouteDispatcherContract;
-use Upgate\LaravelJsonRpc\Contract\Route;
+use Upgate\LaravelJsonRpc\Contract\RouteDispatcherInterface;
+use Upgate\LaravelJsonRpc\Contract\RouteInterface;
 use Upgate\LaravelJsonRpc\Exception\InternalErrorException;
 use Upgate\LaravelJsonRpc\Exception\InvalidParamsException;
 
-final class RouteDispatcher implements RouteDispatcherContract
+final class RouteDispatcher implements RouteDispatcherInterface
 {
 
     /**
@@ -34,11 +34,11 @@ final class RouteDispatcher implements RouteDispatcherContract
     }
 
     /**
-     * @param Route $route
+     * @param RouteInterface $route
      * @param RequestParams $requestParams
      * @return mixed
      */
-    public function dispatch(Route $route, RequestParams $requestParams = null)
+    public function dispatch(RouteInterface $route, RequestParams $requestParams = null)
     {
         $controllerClass = $route->getControllerClass();
         if ($this->controllerNamespace && substr($controllerClass, 0, 1) !== '\\') {

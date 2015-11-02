@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Contracts\Container\Container;
-use Upgate\LaravelJsonRpc\Contract\Route;
+use Upgate\LaravelJsonRpc\Contract\RouteInterface;
 use Upgate\LaravelJsonRpc\Exception\InvalidParamsException;
 use Upgate\LaravelJsonRpc\Server\RequestParams;
 use Upgate\LaravelJsonRpc\Server\RouteDispatcher;
@@ -11,10 +11,10 @@ class RouteDispatcherTest extends PHPUnit_Framework_TestCase
 
     public function testWithNoArguments()
     {
-        $route = $this->getMockBuilder(Route::class)->getMock();
+        $route = $this->getMockBuilder(RouteInterface::class)->getMock();
         $route->method('getControllerClass')->willReturn(RouteDispatcherTest_StubController::class);
         $route->method('getActionName')->willReturn('getArgumentsCount');
-        /** @var Route $route */
+        /** @var RouteInterface $route */
 
         $container = $this->getMockBuilder(Container::class)->getMock();
         $container->method('make')->with(RouteDispatcherTest_StubController::class)
@@ -32,10 +32,10 @@ class RouteDispatcherTest extends PHPUnit_Framework_TestCase
 
     public function testWithRequiredPositionalParams()
     {
-        $route = $this->getMockBuilder(Route::class)->getMock();
+        $route = $this->getMockBuilder(RouteInterface::class)->getMock();
         $route->method('getControllerClass')->willReturn(RouteDispatcherTest_StubController::class);
         $route->method('getActionName')->willReturn('getRequiredArguments');
-        /** @var Route $route */
+        /** @var RouteInterface $route */
 
         $container = $this->getMockBuilder(Container::class)->getMock();
         $container->method('make')->with(RouteDispatcherTest_StubController::class)
@@ -65,10 +65,10 @@ class RouteDispatcherTest extends PHPUnit_Framework_TestCase
 
     public function testWithRequiredNamedParams()
     {
-        $route = $this->getMockBuilder(Route::class)->getMock();
+        $route = $this->getMockBuilder(RouteInterface::class)->getMock();
         $route->method('getControllerClass')->willReturn(RouteDispatcherTest_StubController::class);
         $route->method('getActionName')->willReturn('getRequiredArguments');
-        /** @var Route $route */
+        /** @var RouteInterface $route */
 
         $container = $this->getMockBuilder(Container::class)->getMock();
         $container->method('make')->with(RouteDispatcherTest_StubController::class)
@@ -98,10 +98,10 @@ class RouteDispatcherTest extends PHPUnit_Framework_TestCase
 
     public function testWithOptionalPositionalParams()
     {
-        $route = $this->getMockBuilder(Route::class)->getMock();
+        $route = $this->getMockBuilder(RouteInterface::class)->getMock();
         $route->method('getControllerClass')->willReturn(RouteDispatcherTest_StubController::class);
         $route->method('getActionName')->willReturn('getArgumentsWithLastOptional');
-        /** @var Route $route */
+        /** @var RouteInterface $route */
 
         $container = $this->getMockBuilder(Container::class)->getMock();
         $container->method('make')->with(RouteDispatcherTest_StubController::class)
@@ -122,10 +122,10 @@ class RouteDispatcherTest extends PHPUnit_Framework_TestCase
 
     public function testWithOptionalNamedParams()
     {
-        $route = $this->getMockBuilder(Route::class)->getMock();
+        $route = $this->getMockBuilder(RouteInterface::class)->getMock();
         $route->method('getControllerClass')->willReturn(RouteDispatcherTest_StubController::class);
         $route->method('getActionName')->willReturn('getArgumentsWithLastOptional');
-        /** @var Route $route */
+        /** @var RouteInterface $route */
 
         $container = $this->getMockBuilder(Container::class)->getMock();
         $container->method('make')->with(RouteDispatcherTest_StubController::class)
@@ -146,10 +146,10 @@ class RouteDispatcherTest extends PHPUnit_Framework_TestCase
 
     public function testDependencyInjection()
     {
-        $route = $this->getMockBuilder(Route::class)->getMock();
+        $route = $this->getMockBuilder(RouteInterface::class)->getMock();
         $route->method('getControllerClass')->willReturn(RouteDispatcherTest_StubController::class);
         $route->method('getActionName')->willReturn('dependencies');
-        /** @var Route $route */
+        /** @var RouteInterface $route */
 
         $container = $this->getMockBuilder(Container::class)->getMock();
         $container->method('make')->will(
@@ -167,10 +167,10 @@ class RouteDispatcherTest extends PHPUnit_Framework_TestCase
 
     public function testDependencyInjectionWithPositionalParameters()
     {
-        $route = $this->getMockBuilder(Route::class)->getMock();
+        $route = $this->getMockBuilder(RouteInterface::class)->getMock();
         $route->method('getControllerClass')->willReturn(RouteDispatcherTest_StubController::class);
         $route->method('getActionName')->willReturn('dependenciesWithArgs');
-        /** @var Route $route */
+        /** @var RouteInterface $route */
 
         $container = $this->getMockBuilder(Container::class)->getMock();
         $container->method('make')->will(
@@ -196,10 +196,10 @@ class RouteDispatcherTest extends PHPUnit_Framework_TestCase
 
     public function testDependencyInjectionWithNamedParameters()
     {
-        $route = $this->getMockBuilder(Route::class)->getMock();
+        $route = $this->getMockBuilder(RouteInterface::class)->getMock();
         $route->method('getControllerClass')->willReturn(RouteDispatcherTest_StubController::class);
         $route->method('getActionName')->willReturn('dependenciesWithArgs');
-        /** @var Route $route */
+        /** @var RouteInterface $route */
 
         $container = $this->getMockBuilder(Container::class)->getMock();
         $container->method('make')->will(
@@ -227,10 +227,10 @@ class RouteDispatcherTest extends PHPUnit_Framework_TestCase
     }
 
     public function testRouteDispatcherControllerNamespace() {
-        $route = $this->getMockBuilder(Route::class)->getMock();
+        $route = $this->getMockBuilder(RouteInterface::class)->getMock();
         $route->method('getControllerClass')->willReturn('StubController');
         $route->method('getActionName')->willReturn('returnArg');
-        /** @var Route $route */
+        /** @var RouteInterface $route */
 
         $container = $this->getMockBuilder(Container::class)->getMock();
         $container->method('make')->will(
@@ -258,10 +258,10 @@ class RouteDispatcherTest extends PHPUnit_Framework_TestCase
     }
 
     public function testRouteDispatcherControllerNamespaceIsIgnoredForRouteControllerClassDefinitionStartingWithBackslash() {
-        $route = $this->getMockBuilder(Route::class)->getMock();
+        $route = $this->getMockBuilder(RouteInterface::class)->getMock();
         $route->method('getControllerClass')->willReturn('\RouteDispatcherTestNs\UseThisController');
         $route->method('getActionName')->willReturn('returnArg');
-        /** @var Route $route */
+        /** @var RouteInterface $route */
 
         $container = $this->getMockBuilder(Container::class)->getMock();
         $container->method('make')->will(

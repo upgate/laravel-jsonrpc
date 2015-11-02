@@ -4,17 +4,17 @@ namespace Upgate\LaravelJsonRpc\Server;
 
 use Illuminate\Http\JsonResponse;
 use Psr\Log\LoggerInterface;
-use Upgate\LaravelJsonRpc\Contract\Request;
-use Upgate\LaravelJsonRpc\Contract\RouteDispatcher;
-use Upgate\LaravelJsonRpc\Contract\MiddlewareDispatcher;
-use Upgate\LaravelJsonRpc\Contract\RequestExecutor;
-use Upgate\LaravelJsonRpc\Contract\RequestFactory;
-use Upgate\LaravelJsonRpc\Contract\RouteRegistry;
-use Upgate\LaravelJsonRpc\Contract\Server as ServerContract;
+use Upgate\LaravelJsonRpc\Contract\RequestInterface;
+use Upgate\LaravelJsonRpc\Contract\RouteDispatcherInterface;
+use Upgate\LaravelJsonRpc\Contract\MiddlewareDispatcherInterface;
+use Upgate\LaravelJsonRpc\Contract\RequestExecutorInterface;
+use Upgate\LaravelJsonRpc\Contract\RequestFactoryInterface;
+use Upgate\LaravelJsonRpc\Contract\RouteRegistryInterface;
+use Upgate\LaravelJsonRpc\Contract\ServerInterface as ServerContract;
 use Upgate\LaravelJsonRpc\Exception\InternalErrorException;
 use Upgate\LaravelJsonRpc\Exception\JsonRpcException;
 
-class Server implements ServerContract, RequestExecutor
+class Server implements ServerContract, RequestExecutorInterface
 {
 
     /**
@@ -23,22 +23,22 @@ class Server implements ServerContract, RequestExecutor
     private $payload = null;
 
     /**
-     * @var RequestFactory
+     * @var RequestFactoryInterface
      */
     private $requestFactory;
 
     /**
-     * @var RouteRegistry
+     * @var RouteRegistryInterface
      */
     private $router;
 
     /**
-     * @var RouteDispatcher
+     * @var RouteDispatcherInterface
      */
     private $routeDispatcher;
 
     /**
-     * @var MiddlewareDispatcher
+     * @var MiddlewareDispatcherInterface
      */
     private $middlewareDispatcher;
 
@@ -55,10 +55,10 @@ class Server implements ServerContract, RequestExecutor
     private $middlewareContext = null;
 
     public function __construct(
-        RequestFactory $requestFactory,
-        RouteRegistry $router,
-        RouteDispatcher $routeDispatcher,
-        MiddlewareDispatcher $middlewareDispatcher,
+        RequestFactoryInterface $requestFactory,
+        RouteRegistryInterface $router,
+        RouteDispatcherInterface $routeDispatcher,
+        MiddlewareDispatcherInterface $middlewareDispatcher,
         LoggerInterface $logger
     ) {
         $this->requestFactory = $requestFactory;
@@ -66,6 +66,14 @@ class Server implements ServerContract, RequestExecutor
         $this->routeDispatcher = $routeDispatcher;
         $this->middlewareDispatcher = $middlewareDispatcher;
         $this->logger = $logger;
+    }
+
+    /**
+     * @return RouteRegistryInterface
+     */
+    public function router()
+    {
+        return $this->router;
     }
 
     /**
@@ -112,10 +120,10 @@ class Server implements ServerContract, RequestExecutor
     }
 
     /**
-     * @param Request $request
+     * @param RequestInterface $request
      * @return RequestResponse|null
      */
-    public function execute(Request $request)
+    public function execute(RequestInterface $request)
     {
         try {
             $route = $this->router->resolve($request->getMethod());
@@ -134,7 +142,7 @@ class Server implements ServerContract, RequestExecutor
                 return null;
             }
 
-            return $request->getId() ? RequestResponse::constructErrorResponse($request->getId(), $e) : null;
+            return $request->getId() ? RequestResponse::constructExceptionErrorResponse($request->getId(), $e) : null;
         } catch (\Exception $e) {
             $handlerResult = $this->handleException($e, $request);
 
@@ -150,16 +158,16 @@ class Server implements ServerContract, RequestExecutor
                 return $handlerResult;
             }
 
-            return RequestResponse::constructErrorResponse($request->getId(), new InternalErrorException());
+            return RequestResponse::constructExceptionErrorResponse($request->getId(), new InternalErrorException());
         }
     }
 
     /**
      * @param \Exception $e
-     * @param Request $request
+     * @param RequestInterface $request
      * @return bool|RequestResponse
      */
-    private function handleException(\Exception $e, Request $request)
+    private function handleException(\Exception $e, RequestInterface $request)
     {
         foreach ($this->exceptionHandlers as $className => $handler) {
             if ($e instanceof $className) {

@@ -3,11 +3,11 @@
 namespace Upgate\LaravelJsonRpc\Server;
 
 use Illuminate\Contracts\Support\Jsonable;
-use Upgate\LaravelJsonRpc\Contract\Executable;
-use Upgate\LaravelJsonRpc\Contract\Request as RequestContract;
-use Upgate\LaravelJsonRpc\Contract\RequestExecutor;
+use Upgate\LaravelJsonRpc\Contract\ExecutableInterface;
+use Upgate\LaravelJsonRpc\Contract\RequestInterface as RequestContract;
+use Upgate\LaravelJsonRpc\Contract\RequestExecutorInterface;
 
-class Request implements RequestContract, Executable
+class Request implements RequestContract, ExecutableInterface
 {
 
     /**
@@ -67,11 +67,12 @@ class Request implements RequestContract, Executable
     }
 
     /**
-     * @param RequestExecutor $executor
+     * @param RequestExecutorInterface $executor
      * @return Jsonable|null
      */
-    public function executeWith(RequestExecutor $executor)
+    public function executeWith(RequestExecutorInterface $executor)
     {
         return $executor->execute($this);
     }
+
 }

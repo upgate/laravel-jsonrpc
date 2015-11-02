@@ -4,7 +4,7 @@ namespace Upgate\LaravelJsonRpc\ServiceProvider;
 
 use Illuminate\Support\ServiceProvider;
 use Psr\Log\LoggerInterface;
-use Upgate\LaravelJsonRpc\Contract\Server as JsonRpcServerContract;
+use Upgate\LaravelJsonRpc\Contract\ServerInterface as JsonRpcServerContract;
 use Upgate\LaravelJsonRpc\Server\RouteDispatcher;
 use Upgate\LaravelJsonRpc\Server\MiddlewareDispatcher;
 use Upgate\LaravelJsonRpc\Server\RequestFactory;

@@ -2,15 +2,16 @@
 
 namespace Upgate\LaravelJsonRpc\Server;
 
-use Upgate\LaravelJsonRpc\Contract\RequestFactory as RequestFactoryContract;
+use Upgate\LaravelJsonRpc\Contract\RequestFactoryInterface as RequestFactoryContract;
 use Upgate\LaravelJsonRpc\Exception\BadRequestException;
+use Upgate\LaravelJsonRpc\Contract\ExecutableInterface;
 
 class RequestFactory implements RequestFactoryContract
 {
 
     /**
      * @param string $payloadJson
-     * @return Request|array
+     * @return ExecutableInterface
      */
     public function createFromPayload($payloadJson)
     {
@@ -25,7 +26,7 @@ class RequestFactory implements RequestFactoryContract
                 throw new BadRequestException();
             }
 
-            return $payload;
+            return new Batch($payload, $this);
         } elseif (is_object($payload)) {
             return $this->createRequest($payload);
         } else {

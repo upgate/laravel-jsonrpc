@@ -2,18 +2,18 @@
 
 namespace Upgate\LaravelJsonRpc\Contract;
 
-interface RequestFactory
+interface RequestFactoryInterface
 {
 
     /**
      * @param string $payloadJson
-     * @return Executable
+     * @return ExecutableInterface
      */
     public function createFromPayload($payloadJson);
 
     /**
      * @param object $requestData
-     * @return Request
+     * @return RequestInterface
      */
     public function createRequest($requestData);
 

@@ -2,7 +2,7 @@
 
 namespace Upgate\LaravelJsonRpc\Contract;
 
-interface Route
+interface RouteInterface
 {
 
     /**
@@ -16,7 +16,7 @@ interface Route
     public function getActionName();
 
     /**
-     * @return MiddlewaresConfiguration
+     * @return MiddlewaresConfigurationInterface
      */
     public function getMiddlewaresCollection();
 

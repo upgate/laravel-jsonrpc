@@ -2,9 +2,9 @@
 
 namespace Upgate\LaravelJsonRpc\Server;
 
-use Upgate\LaravelJsonRpc\Contract\MiddlewaresConfiguration;
+use Upgate\LaravelJsonRpc\Contract\MiddlewaresConfigurationInterface;
 
-final class MiddlewaresCollection implements MiddlewaresConfiguration
+final class MiddlewaresCollection implements MiddlewaresConfigurationInterface
 {
 
     /**

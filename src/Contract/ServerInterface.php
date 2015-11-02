@@ -4,7 +4,7 @@ namespace Upgate\LaravelJsonRpc\Contract;
 
 use Illuminate\Http\JsonResponse;
 
-interface Server
+interface ServerInterface
 {
 
     /**

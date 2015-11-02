@@ -4,7 +4,7 @@ namespace Upgate\LaravelJsonRpc\Contract;
 
 use Upgate\LaravelJsonRpc\Server\RequestParams;
 
-interface Request
+interface RequestInterface
 {
 
     /**

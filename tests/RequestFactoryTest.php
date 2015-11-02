@@ -1,6 +1,8 @@
 <?php
 
 use Upgate\LaravelJsonRpc\Exception\BadRequestException;
+use Upgate\LaravelJsonRpc\Server\Request;
+use Upgate\LaravelJsonRpc\Server\Batch;
 use Upgate\LaravelJsonRpc\Server\RequestFactory;
 
 class RequestFactoryTest extends PHPUnit_Framework_TestCase
@@ -121,7 +123,9 @@ class RequestFactoryTest extends PHPUnit_Framework_TestCase
             'id'      => 'foo',
         ];
         $requestFactory = new RequestFactory();
+        /** @var Request $request */
         $request = $requestFactory->createFromPayload(json_encode($requestData));
+        $this->assertInstanceOf(Request::class, $request);
         $this->assertEquals('foo', $request->getMethod());
         $this->assertEquals([1, "bar"], $request->getParams()->getParams());
         $this->assertFalse($request->getParams()->areParamsNamed());
@@ -143,12 +147,13 @@ class RequestFactoryTest extends PHPUnit_Framework_TestCase
             ],
         ];
         $requestFactory = new RequestFactory();
+        /** @var Batch $batch */
         $batch = $requestFactory->createFromPayload(json_encode($requestData));
-        $this->assertInternalType('array', $batch);
-        $this->assertCount(2, $batch);
+        $this->assertInstanceOf(Batch::class, $batch);
+        $this->assertCount(2, $batch->toArray());
 
         for ($i = 0; $i < 2; ++$i) {
-            $request = $requestFactory->createRequest($batch[$i]);
+            $request = $requestFactory->createRequest($batch->toArray()[$i]);
             $this->assertEquals($requestData[$i]->method, $request->getMethod());
             $this->assertEquals($requestData[$i]->id, $request->getId());
         }

@@ -4,14 +4,14 @@ namespace Upgate\LaravelJsonRpc\Contract;
 
 use Upgate\LaravelJsonRpc\Server\RequestParams;
 
-interface RouteDispatcher
+interface RouteDispatcherInterface
 {
 
     /**
-     * @param Route $route
+     * @param RouteInterface $route
      * @param RequestParams $requestParams
      * @return mixed
      */
-    public function dispatch(Route $route, RequestParams $requestParams = null);
+    public function dispatch(RouteInterface $route, RequestParams $requestParams = null);
 
 }

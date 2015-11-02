@@ -4,10 +4,10 @@ namespace Upgate\LaravelJsonRpc\Server;
 
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Pipeline\Pipeline;
-use Upgate\LaravelJsonRpc\Contract\MiddlewareDispatcher as MiddlewareDispatcherContract;
-use Upgate\LaravelJsonRpc\Contract\MiddlewaresConfiguration;
+use Upgate\LaravelJsonRpc\Contract\MiddlewareDispatcherInterface;
+use Upgate\LaravelJsonRpc\Contract\MiddlewaresConfigurationInterface;
 
-final class MiddlewareDispatcher implements MiddlewareDispatcherContract
+final class MiddlewareDispatcher implements MiddlewareDispatcherInterface
 {
 
     /**
@@ -24,12 +24,12 @@ final class MiddlewareDispatcher implements MiddlewareDispatcherContract
     }
 
     /**
-     * @param MiddlewaresConfiguration $middlewaresConfiguration
+     * @param MiddlewaresConfigurationInterface $middlewaresConfiguration
      * @param $context
      * @param callable $next
      * @return mixed
      */
-    public function dispatch(MiddlewaresConfiguration $middlewaresConfiguration, $context, callable $next)
+    public function dispatch(MiddlewaresConfigurationInterface $middlewaresConfiguration, $context, callable $next)
     {
         $pipeline = new Pipeline($this->container);
 

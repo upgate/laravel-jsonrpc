@@ -5,7 +5,7 @@ namespace Upgate\LaravelJsonRpc\Server;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 
-class BatchResponse implements Jsonable, Arrayable
+final class BatchResponse implements Jsonable, Arrayable
 {
 
     private $responses = [];

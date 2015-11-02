@@ -1,9 +1,9 @@
 <?php
 
 use Upgate\LaravelJsonRpc\Server\Batch;
-use Upgate\LaravelJsonRpc\Contract\RequestFactory;
-use Upgate\LaravelJsonRpc\Contract\Request;
-use Upgate\LaravelJsonRpc\Contract\RequestExecutor;
+use Upgate\LaravelJsonRpc\Contract\RequestFactoryInterface;
+use Upgate\LaravelJsonRpc\Contract\RequestInterface;
+use Upgate\LaravelJsonRpc\Contract\RequestExecutorInterface;
 use Illuminate\Contracts\Support\Arrayable;
 
 class BatchTest extends PHPUnit_Framework_TestCase
@@ -11,19 +11,19 @@ class BatchTest extends PHPUnit_Framework_TestCase
 
     public function testBatch()
     {
-        $requestFactory = $this->getMockBuilder(RequestFactory::class)->getMock();
+        $requestFactory = $this->getMockBuilder(RequestFactoryInterface::class)->getMock();
         $requestFactory->method('createRequest')->willReturnCallback(
             function ($argument) {
-                $request = $this->getMockBuilder(Request::class)->getMock();
+                $request = $this->getMockBuilder(RequestInterface::class)->getMock();
                 /** @noinspection PhpUndefinedFieldInspection */
                 $request->mockValue = $argument;
 
                 return $request;
             }
         );
-        /** @var RequestFactory $requestFactory */
+        /** @var RequestFactoryInterface $requestFactory */
 
-        $requestExecutor = $this->getMockBuilder(RequestExecutor::class)->getMock();
+        $requestExecutor = $this->getMockBuilder(RequestExecutorInterface::class)->getMock();
         $requestExecutor->method('execute')->willReturnCallback(
             function ($requestMock) {
                 $response = $this->getMockBuilder(Arrayable::class)->getMock();
@@ -32,7 +32,7 @@ class BatchTest extends PHPUnit_Framework_TestCase
                 return $response;
             }
         );
-        /** @var RequestExecutor $requestExecutor */
+        /** @var RequestExecutorInterface $requestExecutor */
 
         $batch = new Batch(['foo', 'bar'], $requestFactory);
         $response = $batch->executeWith($requestExecutor);

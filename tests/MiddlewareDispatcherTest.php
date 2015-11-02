@@ -2,7 +2,7 @@
 
 use Illuminate\Contracts\Container\Container;
 use Upgate\LaravelJsonRpc\Server\MiddlewareDispatcher;
-use Upgate\LaravelJsonRpc\Contract\MiddlewaresConfiguration;
+use Upgate\LaravelJsonRpc\Contract\MiddlewaresConfigurationInterface;
 
 class MiddlewareDispatcherTest extends PHPUnit_Framework_TestCase
 {
@@ -12,9 +12,9 @@ class MiddlewareDispatcherTest extends PHPUnit_Framework_TestCase
         $container = $this->getMockBuilder(Container::class)->getMock();
         /** @var Container $container */
 
-        $middlewares = $this->getMockBuilder(MiddlewaresConfiguration::class)->getMock();
+        $middlewares = $this->getMockBuilder(MiddlewaresConfigurationInterface::class)->getMock();
         $middlewares->method('getMiddlewares')->willReturn([]);
-        /** @var MiddlewaresConfiguration $middlewares */
+        /** @var MiddlewaresConfigurationInterface $middlewares */
 
         $middlewareDispatcher = new MiddlewareDispatcher($container);
         $result = $middlewareDispatcher->dispatch(
@@ -39,12 +39,12 @@ class MiddlewareDispatcherTest extends PHPUnit_Framework_TestCase
         );
         /** @var Container $container */
 
-        $middlewares = $this->getMockBuilder(MiddlewaresConfiguration::class)->getMock();
+        $middlewares = $this->getMockBuilder(MiddlewaresConfigurationInterface::class)->getMock();
         $middlewares->method('getMiddlewares')->willReturn([
             MiddlewareDispatcherTest_MiddlewareIncrement::class,
             MiddlewareDispatcherTest_MiddlewareDouble::class,
         ]);
-        /** @var MiddlewaresConfiguration $middlewares */
+        /** @var MiddlewaresConfigurationInterface $middlewares */
 
         $middlewareDispatcher = new MiddlewareDispatcher($container);
         $result = $middlewareDispatcher->dispatch(
@@ -69,13 +69,13 @@ class MiddlewareDispatcherTest extends PHPUnit_Framework_TestCase
         );
         /** @var Container $container */
 
-        $middlewares = $this->getMockBuilder(MiddlewaresConfiguration::class)->getMock();
+        $middlewares = $this->getMockBuilder(MiddlewaresConfigurationInterface::class)->getMock();
         $middlewares->method('getMiddlewares')->willReturn([
             MiddlewareDispatcherTest_MiddlewareIncrement::class,
             MiddlewareDispatcherTest_MiddlewareReturn::class,
             MiddlewareDispatcherTest_MiddlewareException::class,
         ]);
-        /** @var MiddlewaresConfiguration $middlewares */
+        /** @var MiddlewaresConfigurationInterface $middlewares */
 
         $middlewareDispatcher = new MiddlewareDispatcher($container);
         $result = $middlewareDispatcher->dispatch(

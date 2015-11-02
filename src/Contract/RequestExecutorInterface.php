@@ -4,13 +4,13 @@ namespace Upgate\LaravelJsonRpc\Contract;
 
 use Upgate\LaravelJsonRpc\Server\RequestResponse;
 
-interface RequestExecutor
+interface RequestExecutorInterface
 {
 
     /**
-     * @param Request $request
+     * @param RequestInterface $request
      * @return RequestResponse
      */
-    public function execute(Request $request);
+    public function execute(RequestInterface $request);
 
 }
