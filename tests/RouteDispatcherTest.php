@@ -21,12 +21,12 @@ class RouteDispatcherTest extends PHPUnit_Framework_TestCase
             ->willReturn(new RouteDispatcherTest_StubController());
         /** @var Container $container */
 
-        $requestDispatcher = new RouteDispatcher($container);
-        $result = $requestDispatcher->dispatch($route, null);
+        $routeDispatcher = new RouteDispatcher($container);
+        $result = $routeDispatcher->dispatch($route, null);
         $this->assertEquals(0, $result, 'Failed with null request params');
-        $result = $requestDispatcher->dispatch($route, RequestParams::constructPositional([]));
+        $result = $routeDispatcher->dispatch($route, RequestParams::constructPositional([]));
         $this->assertEquals(0, $result, 'Failed with empty positional params');
-        $result = $requestDispatcher->dispatch($route, RequestParams::constructNamed([]));
+        $result = $routeDispatcher->dispatch($route, RequestParams::constructNamed([]));
         $this->assertEquals(0, $result, 'Failed with empty named params');
     }
 
@@ -42,9 +42,9 @@ class RouteDispatcherTest extends PHPUnit_Framework_TestCase
             ->willReturn(new RouteDispatcherTest_StubController());
         /** @var Container $container */
 
-        $requestDispatcher = new RouteDispatcher($container);
+        $routeDispatcher = new RouteDispatcher($container);
 
-        $result = $requestDispatcher->dispatch(
+        $result = $routeDispatcher->dispatch(
             $route,
             RequestParams::constructPositional(
                 ['foo_value', 'bar_value', 42]
@@ -57,7 +57,7 @@ class RouteDispatcherTest extends PHPUnit_Framework_TestCase
         );
 
         $this->setExpectedException(InvalidParamsException::class, '"bar" is required', -32602);
-        $requestDispatcher->dispatch(
+        $routeDispatcher->dispatch(
             $route,
             RequestParams::constructPositional([1])
         );
@@ -75,9 +75,9 @@ class RouteDispatcherTest extends PHPUnit_Framework_TestCase
             ->willReturn(new RouteDispatcherTest_StubController());
         /** @var Container $container */
 
-        $requestDispatcher = new RouteDispatcher($container);
+        $routeDispatcher = new RouteDispatcher($container);
 
-        $result = $requestDispatcher->dispatch(
+        $result = $routeDispatcher->dispatch(
             $route,
             RequestParams::constructNamed(
                 ['baz' => 42, 'foo' => 'foo_value', 'bar' => 'bar_value']
@@ -90,7 +90,7 @@ class RouteDispatcherTest extends PHPUnit_Framework_TestCase
         );
 
         $this->setExpectedException(InvalidParamsException::class, '"bar" is required', -32602);
-        $requestDispatcher->dispatch(
+        $routeDispatcher->dispatch(
             $route,
             RequestParams::constructPositional([1])
         );
@@ -108,16 +108,16 @@ class RouteDispatcherTest extends PHPUnit_Framework_TestCase
             ->willReturn(new RouteDispatcherTest_StubController());
         /** @var Container $container */
 
-        $requestDispatcher = new RouteDispatcher($container);
+        $routeDispatcher = new RouteDispatcher($container);
 
-        $result = $requestDispatcher->dispatch($route, RequestParams::constructPositional([1, 42]));
+        $result = $routeDispatcher->dispatch($route, RequestParams::constructPositional([1, 42]));
         $this->assertEquals(['required' => 1, 'optional' => 42], $result, 'Failed with provided optional value');
 
-        $result = $requestDispatcher->dispatch($route, RequestParams::constructPositional([2]));
+        $result = $routeDispatcher->dispatch($route, RequestParams::constructPositional([2]));
         $this->assertEquals(['required' => 2, 'optional' => 'default'], $result, 'Failed with missing optional value');
 
         $this->setExpectedException(InvalidParamsException::class, '"required" is required', -32602);
-        $requestDispatcher->dispatch($route, null);
+        $routeDispatcher->dispatch($route, null);
     }
 
     public function testWithOptionalNamedParams()
@@ -132,16 +132,16 @@ class RouteDispatcherTest extends PHPUnit_Framework_TestCase
             ->willReturn(new RouteDispatcherTest_StubController());
         /** @var Container $container */
 
-        $requestDispatcher = new RouteDispatcher($container);
+        $routeDispatcher = new RouteDispatcher($container);
 
-        $result = $requestDispatcher->dispatch($route, RequestParams::constructNamed(['required' => 1, 'optional' => 42]));
+        $result = $routeDispatcher->dispatch($route, RequestParams::constructNamed(['required' => 1, 'optional' => 42]));
         $this->assertEquals(['required' => 1, 'optional' => 42], $result, 'Failed with provided optional value');
 
-        $result = $requestDispatcher->dispatch($route, RequestParams::constructNamed(['required' => 2]));
+        $result = $routeDispatcher->dispatch($route, RequestParams::constructNamed(['required' => 2]));
         $this->assertEquals(['required' => 2, 'optional' => 'default'], $result, 'Failed with missing optional value');
 
         $this->setExpectedException(InvalidParamsException::class, '"required" is required', -32602);
-        $requestDispatcher->dispatch($route, null);
+        $routeDispatcher->dispatch($route, null);
     }
 
     public function testDependencyInjection()
@@ -161,8 +161,8 @@ class RouteDispatcherTest extends PHPUnit_Framework_TestCase
         );
         /** @var Container $container */
 
-        $requestDispatcher = new RouteDispatcher($container);
-        $this->assertTrue($requestDispatcher->dispatch($route, null));
+        $routeDispatcher = new RouteDispatcher($container);
+        $this->assertTrue($routeDispatcher->dispatch($route, null));
     }
 
     public function testDependencyInjectionWithPositionalParameters()
@@ -182,16 +182,16 @@ class RouteDispatcherTest extends PHPUnit_Framework_TestCase
         );
         /** @var Container $container */
 
-        $requestDispatcher = new RouteDispatcher($container);
+        $routeDispatcher = new RouteDispatcher($container);
 
-        $result = $requestDispatcher->dispatch($route, RequestParams::constructPositional([1, 42]));
+        $result = $routeDispatcher->dispatch($route, RequestParams::constructPositional([1, 42]));
         $this->assertEquals(['required' => 1, 'optional' => 42], $result, 'Failed with provided optional value');
 
-        $result = $requestDispatcher->dispatch($route, RequestParams::constructPositional([2]));
+        $result = $routeDispatcher->dispatch($route, RequestParams::constructPositional([2]));
         $this->assertEquals(['required' => 2, 'optional' => 'default'], $result, 'Failed with missing optional value');
 
         $this->setExpectedException(InvalidParamsException::class, '"required" is required', -32602);
-        $requestDispatcher->dispatch($route, null);
+        $routeDispatcher->dispatch($route, null);
     }
 
     public function testDependencyInjectionWithNamedParameters()
@@ -211,19 +211,81 @@ class RouteDispatcherTest extends PHPUnit_Framework_TestCase
         );
         /** @var Container $container */
 
-        $requestDispatcher = new RouteDispatcher($container);
+        $routeDispatcher = new RouteDispatcher($container);
 
-        $result = $requestDispatcher->dispatch(
+        $result = $routeDispatcher->dispatch(
             $route,
             RequestParams::constructNamed(['required' => 1, 'optional' => 42])
         );
         $this->assertEquals(['required' => 1, 'optional' => 42], $result, 'Failed with provided optional value');
 
-        $result = $requestDispatcher->dispatch($route, RequestParams::constructNamed(['required' => 2]));
+        $result = $routeDispatcher->dispatch($route, RequestParams::constructNamed(['required' => 2]));
         $this->assertEquals(['required' => 2, 'optional' => 'default'], $result, 'Failed with missing optional value');
 
         $this->setExpectedException(InvalidParamsException::class, '"required" is required', -32602);
-        $requestDispatcher->dispatch($route, null);
+        $routeDispatcher->dispatch($route, null);
+    }
+
+    public function testRouteDispatcherControllerNamespace() {
+        $route = $this->getMockBuilder(Route::class)->getMock();
+        $route->method('getControllerClass')->willReturn('StubController');
+        $route->method('getActionName')->willReturn('returnArg');
+        /** @var Route $route */
+
+        $container = $this->getMockBuilder(Container::class)->getMock();
+        $container->method('make')->will(
+            $this->returnCallback(
+                function ($className) {
+                    return new $className;
+                }
+            )
+        );
+        /** @var Container $container */
+
+        eval('
+            namespace RouteDispatcherTestNs {
+                class StubController {
+                    public function returnArg($value) {
+                        return $value;
+                    }
+                }
+            }
+        ');
+
+        $routeDispatcher = new RouteDispatcher($container, 'RouteDispatcherTestNs');
+        $result = $routeDispatcher->dispatch($route, RequestParams::constructPositional([100500]));
+        $this->assertEquals(100500, $result);
+    }
+
+    public function testRouteDispatcherControllerNamespaceIsIgnoredForRouteControllerClassDefinitionStartingWithBackslash() {
+        $route = $this->getMockBuilder(Route::class)->getMock();
+        $route->method('getControllerClass')->willReturn('\RouteDispatcherTestNs\UseThisController');
+        $route->method('getActionName')->willReturn('returnArg');
+        /** @var Route $route */
+
+        $container = $this->getMockBuilder(Container::class)->getMock();
+        $container->method('make')->will(
+            $this->returnCallback(
+                function ($className) {
+                    return new $className;
+                }
+            )
+        );
+        /** @var Container $container */
+
+        eval('
+            namespace RouteDispatcherTestNs {
+                class UseThisController {
+                    public function returnArg($value) {
+                        return $value;
+                    }
+                }
+            }
+        ');
+
+        $routeDispatcher = new RouteDispatcher($container, 'NoSuchNamespace');
+        $result = $routeDispatcher->dispatch($route, RequestParams::constructPositional([100500]));
+        $this->assertEquals(100500, $result);
     }
 
 }

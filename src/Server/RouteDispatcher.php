@@ -19,11 +19,18 @@ final class RouteDispatcher implements RouteDispatcherContract
     private $container;
 
     /**
-     * @param Container $container
+     * @var null|string
      */
-    public function __construct(Container $container)
+    private $controllerNamespace;
+
+    /**
+     * @param Container $container
+     * @param string|null $controllerNamespace
+     */
+    public function __construct(Container $container, $controllerNamespace = null)
     {
         $this->container = $container;
+        $this->controllerNamespace = $controllerNamespace ? (string)$controllerNamespace : null;
     }
 
     /**
@@ -33,7 +40,11 @@ final class RouteDispatcher implements RouteDispatcherContract
      */
     public function dispatch(Route $route, RequestParams $requestParams = null)
     {
-        $controller = $this->container->make($route->getControllerClass());
+        $controllerClass = $route->getControllerClass();
+        if ($this->controllerNamespace && substr($controllerClass, 0, 1) !== '\\') {
+            $controllerClass = $this->controllerNamespace . '\\' . $controllerClass;
+        }
+        $controller = $this->container->make($controllerClass);
         try {
             $method = new ReflectionMethod($controller, $route->getActionName());
         } catch (ReflectionException $e) {

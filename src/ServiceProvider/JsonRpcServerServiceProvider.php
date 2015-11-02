@@ -5,7 +5,8 @@ namespace Upgate\LaravelJsonRpc\ServiceProvider;
 use Illuminate\Support\ServiceProvider;
 use Psr\Log\LoggerInterface;
 use Upgate\LaravelJsonRpc\Contract\Server as JsonRpcServerContract;
-use Upgate\LaravelJsonRpc\Server\RequestDispatcher;
+use Upgate\LaravelJsonRpc\Server\RouteDispatcher;
+use Upgate\LaravelJsonRpc\Server\MiddlewareDispatcher;
 use Upgate\LaravelJsonRpc\Server\RequestFactory;
 use Upgate\LaravelJsonRpc\Server\Router;
 use Upgate\LaravelJsonRpc\Server\Server;
@@ -21,7 +22,8 @@ class JsonRpcServerServiceProvider extends ServiceProvider
                 return new Server(
                     new RequestFactory(),
                     new Router(),
-                    new RequestDispatcher($this->app),
+                    new RouteDispatcher($this->app),
+                    new MiddlewareDispatcher($this->app),
                     $this->app->make(LoggerInterface::class)
                 );
             }
