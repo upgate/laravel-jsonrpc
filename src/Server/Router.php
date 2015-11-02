@@ -2,6 +2,7 @@
 
 namespace Upgate\LaravelJsonRpc\Server;
 
+use Upgate\LaravelJsonRpc\Contract\MiddlewareAliasRegistryInterface;
 use Upgate\LaravelJsonRpc\Contract\RouteInterface as RouteContract;
 use Upgate\LaravelJsonRpc\Contract\RouteRegistryInterface;
 use Upgate\LaravelJsonRpc\Exception\RouteNotFoundException;
@@ -90,6 +91,17 @@ final class Router implements RouteRegistryInterface
         foreach ($middlewares as $middleware) {
             $this->middlewaresCollection->addMiddleware($middleware);
         }
+
+        return $this;
+    }
+
+    /**
+     * @param MiddlewareAliasRegistryInterface|null $aliases
+     * @return $this
+     */
+    public function setMiddlewareAliases(MiddlewareAliasRegistryInterface $aliases = null)
+    {
+        $this->middlewaresCollection->setMiddlewareAliases($aliases);
 
         return $this;
     }

@@ -2,6 +2,7 @@
 
 namespace Upgate\LaravelJsonRpc\Server;
 
+use Upgate\LaravelJsonRpc\Contract\MiddlewareAliasRegistryInterface;
 use Upgate\LaravelJsonRpc\Contract\MiddlewaresConfigurationInterface;
 
 final class MiddlewaresCollection implements MiddlewaresConfigurationInterface
@@ -13,11 +14,18 @@ final class MiddlewaresCollection implements MiddlewaresConfigurationInterface
     private $middlewares;
 
     /**
-     * @param array $middlewares
+     * @var MiddlewareAliasRegistryInterface
      */
-    public function __construct(array $middlewares = [])
+    private $aliasesRegistry;
+
+    /**
+     * @param array $middlewares
+     * @param MiddlewareAliasRegistryInterface $aliasesRegistry
+     */
+    public function __construct(array $middlewares = [], MiddlewareAliasRegistryInterface $aliasesRegistry = null)
     {
         $this->middlewares = $middlewares;
+        $this->setMiddlewareAliases($aliasesRegistry);
     }
 
     /**
@@ -55,7 +63,16 @@ final class MiddlewaresCollection implements MiddlewaresConfigurationInterface
      */
     public function getMiddlewares()
     {
-        return $this->middlewares;
+        return $this->aliasesRegistry ? $this->aliasesRegistry->resolveAliases($this->middlewares) : $this->middlewares;
+    }
+
+    /**
+     * @param MiddlewareAliasRegistryInterface|null $aliases
+     * @return $this
+     */
+    public function setMiddlewareAliases(MiddlewareAliasRegistryInterface $aliases = null)
+    {
+        $this->aliasesRegistry = $aliases;
     }
 
 }

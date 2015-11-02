@@ -6,6 +6,12 @@ interface MiddlewaresConfigurationInterface
 {
 
     /**
+     * @param MiddlewareAliasRegistryInterface|null $aliases
+     * @return $this
+     */
+    public function setMiddlewareAliases(MiddlewareAliasRegistryInterface $aliases = null);
+
+    /**
      * @return string[]
      */
     public function getMiddlewares();

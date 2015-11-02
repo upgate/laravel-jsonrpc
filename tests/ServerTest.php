@@ -66,6 +66,36 @@ class ServerTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($expectedResponseData, json_decode($response->getContent()));
     }
 
+    public function testSingleRequestWithMiddlewareAlias()
+    {
+        $server = $this->assembleServer();
+
+        $server->registerMiddlewareAliases(['abort' => ServerTest_Middleware_Abort::class]);
+
+        $server->router()
+            ->addMiddleware(['abort'])
+            ->bindController('foo', 'ServerTest_FooController');
+
+        $server->setPayload(
+            json_encode(
+                [
+                    'jsonrpc' => '2.0',
+                    'method'  => 'foo',
+                    'id'      => 1
+                ]
+            )
+        );
+
+        $response = $server->run();
+
+        $expectedResponseData = (object)[
+            'jsonrpc' => '2.0',
+            'result'  => (object)['aborted_by_middleware' => true],
+            'id'      => 1
+        ];
+        $this->assertEquals($expectedResponseData, json_decode($response->getContent()));
+    }
+
     public function testSingleRequestWithExceptionThrown()
     {
         $server = $this->assembleServer();

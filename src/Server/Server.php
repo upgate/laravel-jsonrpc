@@ -105,6 +105,17 @@ class Server implements ServerContract, RequestExecutorInterface
     }
 
     /**
+     * @param array $aliases
+     * @return $this
+     */
+    public function registerMiddlewareAliases(array $aliases)
+    {
+        $this->router->setMiddlewareAliases(new MiddlewareAliasRegistry($aliases));
+
+        return $this;
+    }
+
+    /**
      * @param string $payload
      * @return void
      */

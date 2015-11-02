@@ -21,6 +21,12 @@ interface ServerInterface
     public function onException($exceptionClass, $handler, $first = false);
 
     /**
+     * @param array $aliases
+     * @return $this
+     */
+    public function registerMiddlewareAliases(array $aliases);
+
+    /**
      * @param string $payload
      * @return void
      */
