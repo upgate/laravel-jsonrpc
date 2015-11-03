@@ -138,7 +138,15 @@ class Server implements ServerInterface, RequestExecutorInterface
             $payload = $this->payload;
         }
 
-        return new JsonResponse($this->requestFactory->createFromPayload($payload)->executeWith($this));
+        try {
+            $response = $this->requestFactory->createFromPayload($payload)->executeWith($this);
+        } catch (JsonRpcException $e) {
+            $response = RequestResponse::constructExceptionErrorResponse(null, $e);
+        } catch (\Exception $e) {
+            $response = $this->handleException($e);
+        }
+
+        return new JsonResponse($response);
     }
 
     /**
@@ -166,22 +174,35 @@ class Server implements ServerInterface, RequestExecutorInterface
 
             return $request->getId() ? RequestResponse::constructExceptionErrorResponse($request->getId(), $e) : null;
         } catch (\Exception $e) {
-            $handlerResult = $this->handleException($e, $request);
-
-            if (!$handlerResult) {
-                $this->logger->error($e);
-            }
-
-            if (!$request->getId()) {
-                return null;
-            }
-
-            if ($handlerResult instanceof RequestResponse) {
-                return $handlerResult;
-            }
-
-            return RequestResponse::constructExceptionErrorResponse($request->getId(), new InternalErrorException());
+            return $this->handleException($e, $request);
         }
+    }
+
+    /**
+     * @param \Exception $e
+     * @param RequestInterface|null $request
+     * @return null|RequestResponse
+     */
+    private function handleException(\Exception $e, RequestInterface $request = null)
+    {
+        $handlerResult = $this->runExceptionHandlers($e, $request);
+
+        if (!$handlerResult) {
+            $this->logger->error($e);
+        }
+
+        if ($request && !$request->getId()) {
+            return null;
+        }
+
+        if ($handlerResult instanceof RequestResponse) {
+            return $handlerResult;
+        }
+
+        return RequestResponse::constructExceptionErrorResponse(
+            $request ? $request->getId() : null,
+            new InternalErrorException()
+        );
     }
 
     /**
@@ -189,7 +210,7 @@ class Server implements ServerInterface, RequestExecutorInterface
      * @param RequestInterface $request
      * @return bool|RequestResponse
      */
-    private function handleException(\Exception $e, RequestInterface $request)
+    private function runExceptionHandlers(\Exception $e, RequestInterface $request = null)
     {
         foreach ($this->exceptionHandlers as $className => $handler) {
             if ($e instanceof $className) {

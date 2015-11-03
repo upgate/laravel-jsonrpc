@@ -13,7 +13,7 @@ final class RequestResponse implements Jsonable, Arrayable
     private $isError = false;
 
     /**
-     * @param string|int $id
+     * @param string|int|null $id
      * @param \Exception $exception
      * @return RequestResponse
      */
@@ -23,7 +23,7 @@ final class RequestResponse implements Jsonable, Arrayable
     }
 
     /**
-     * @param string|int $id
+     * @param string|int|null $id
      * @param string $message
      * @param int $code
      * @return RequestResponse
@@ -41,7 +41,7 @@ final class RequestResponse implements Jsonable, Arrayable
     }
 
     /**
-     * @param string|int $id
+     * @param string|int|null $id
      * @param mixed $result
      * @param bool $isError
      */
@@ -70,11 +70,17 @@ final class RequestResponse implements Jsonable, Arrayable
      */
     public function toArray()
     {
-        return [
-            'jsonrpc'                             => '2.0',
-            ($this->isError ? 'error' : 'result') => $this->result,
-            'id'                                  => $this->id,
-        ];
+        $result = ['jsonrpc' => '2.0'];
+        if ($this->id) {
+            $result['id'] = $this->id;
+        }
+        if ($this->isError) {
+            $result['error'] = $this->result;
+        } else {
+            $result['result'] = $this->result;
+        }
+
+        return $result;
     }
 
 }

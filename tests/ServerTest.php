@@ -305,6 +305,18 @@ class ServerTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($expectedResponseData, json_decode($response->getContent()));
     }
 
+    public function testMalformedPayloadExceptionIsHandled()
+    {
+        $server = $this->assembleServer();
+        $server->setPayload('');
+        $response = $server->run();
+        $expectedResponseData = (object)[
+            'jsonrpc' => '2.0',
+            'error'   => (object)['message' => 'Invalid Request', 'code' => -32600]
+        ];
+        $this->assertEquals($expectedResponseData, json_decode($response->getContent()));
+    }
+
     private function assembleServer()
     {
         return new Server\Server(
