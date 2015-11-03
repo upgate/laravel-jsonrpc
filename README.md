@@ -37,7 +37,7 @@ class RouteServiceProvider extends ServiceProvider
 
 ```php
 $router->post('/jsonrpc', function (Illuminate\Http\Request $request) use ($jsonRpcServer) {
-    return $jsonRpcServer->router()
+    $jsonRpcServer->router()
         ->addMiddleware(['fooMiddleware', 'barMiddleware']) // middleware alias names or class names
         ->bindController('foo', 'FooController') // for 'foo.$method' methods invoke FooController->$method(),
                                                  // for 'foo' method invoke FooConroller->index()
@@ -45,10 +45,13 @@ $router->post('/jsonrpc', function (Illuminate\Http\Request $request) use ($json
         ->group(
             ['bazMiddleware'], // add bazMiddleware for methods in this group
             function ($jsonRpcRouter) {
-                $jsonRpcRouter->bind('bar.baz', 'MyController@bazz') // for 'bar.baz' method invoke MyController->bazz()
+                // for 'bar.baz' method invoke MyController->bazz()
+                $jsonRpcRouter->bind('bar.baz', 'MyController@bazz');
             }
-        )
-        ->run($request); // Run json-rpc server with $request passed to middlewares as a handle() method argument
+        );
+
+    // Run json-rpc server with $request passed to middlewares as a handle() method argument
+    return $jsonRpcServer->run($request);
 });
 ```
 
