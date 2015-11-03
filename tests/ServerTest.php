@@ -3,7 +3,6 @@
 use Illuminate\Contracts\Container\Container;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
-use Upgate\LaravelJsonRpc\Contract\MiddlewaresConfigurationInterface;
 use Upgate\LaravelJsonRpc\Server;
 
 /**

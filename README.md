@@ -19,9 +19,13 @@ class RouteServiceProvider extends ServiceProvider
         $router->group(
             ['namespace' => $this->namespace],
             function (Router $router) {
+                // Create an instance of JsonRpcServer
                 $jsonRpcServer = $this->app->make(JsonRpcServerContract::class);
+                // Set default controller namespace
                 $jsonRpcServer->setControllerNamespace($this->namespace);
+                // Register middleware aliases configured for Laravel router
                 $jsonRpcServer->registerMiddlewareAliases($router->getMiddleware());
+                
                 require app_path('Http/routes.php');
             }
         );
@@ -32,20 +36,19 @@ class RouteServiceProvider extends ServiceProvider
 - Use $jsonRpcServer in your routes.php, like this:
 
 ```php
-$router->post('/jsonrpc', function(Illuminate\Http\Request $request) use ($jsonRpcServer) {
+$router->post('/jsonrpc', function (Illuminate\Http\Request $request) use ($jsonRpcServer) {
     return $jsonRpcServer->router()
-        ->addMiddleware(['foo', 'bar'])
-        ->bindController('foo', 'FooController')
-        ->bind('bar', 'MyController@bar')
+        ->addMiddleware(['fooMiddleware', 'barMiddleware']) // middleware alias names or class names
+        ->bindController('foo', 'FooController') // for 'foo.$method' methods invoke FooController->$method(),
+                                                 // for 'foo' method invoke FooConroller->index()
+        ->bind('bar', 'MyController@bar') // for 'bar' method invoke MyController->bar()
         ->group(
-            function ($middlewares) {
-                $middlewares->addMiddleware('baz');
-            },
+            ['bazMiddleware'], // add bazMiddleware for methods in this group
             function ($jsonRpcRouter) {
-                $jsonRpcRouter->bind('bar.baz', 'MyController@bazz')
+                $jsonRpcRouter->bind('bar.baz', 'MyController@bazz') // for 'bar.baz' method invoke MyController->bazz()
             }
         )
-        ->run($request);
+        ->run($request); // Run json-rpc server with $request passed to middlewares as a handle() method argument
 });
 ```
 

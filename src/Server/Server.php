@@ -10,11 +10,11 @@ use Upgate\LaravelJsonRpc\Contract\MiddlewareDispatcherInterface;
 use Upgate\LaravelJsonRpc\Contract\RequestExecutorInterface;
 use Upgate\LaravelJsonRpc\Contract\RequestFactoryInterface;
 use Upgate\LaravelJsonRpc\Contract\RouteRegistryInterface;
-use Upgate\LaravelJsonRpc\Contract\ServerInterface as ServerContract;
+use Upgate\LaravelJsonRpc\Contract\ServerInterface;
 use Upgate\LaravelJsonRpc\Exception\InternalErrorException;
 use Upgate\LaravelJsonRpc\Exception\JsonRpcException;
 
-class Server implements ServerContract, RequestExecutorInterface
+class Server implements ServerInterface, RequestExecutorInterface
 {
 
     /**

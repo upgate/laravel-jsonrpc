@@ -9,6 +9,9 @@ class MiddlewareAliasRegistry implements MiddlewareAliasRegistryInterface
 
     private $registry = [];
 
+    /**
+     * @param array|null $aliases
+     */
     public function __construct(array $aliases = null)
     {
         if ($aliases) {
@@ -68,4 +71,5 @@ class MiddlewareAliasRegistry implements MiddlewareAliasRegistryInterface
             $middlewares
         );
     }
+
 }
