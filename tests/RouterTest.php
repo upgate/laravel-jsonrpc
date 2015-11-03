@@ -106,4 +106,33 @@ class RouterTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(['mid1', 'mid2'], $router->resolve('bar')->getMiddlewaresCollection()->getMiddlewares());
     }
 
+    public function testGroupMiddlewaresConfigurationWithArrayMiddlewares()
+    {
+        $middlewares = new MiddlewaresCollection(['mid1']);
+        $router = new Router($middlewares);
+        $router->bind('foo', 'FooController@foo');
+        $router->group(
+            ['mid2', 'mid3'],
+            function (Router $router) {
+                $router->bind('bar', 'BarController@bar');
+            }
+        );
+        $this->assertEquals(['mid1'], $router->resolve('foo')->getMiddlewaresCollection()->getMiddlewares());
+        $this->assertEquals(['mid1', 'mid2', 'mid3'], $router->resolve('bar')->getMiddlewaresCollection()->getMiddlewares());
+    }
+
+    public function testGroupMiddlewaresConfigurationWithStringMiddleware()
+    {
+        $middlewares = new MiddlewaresCollection(['mid1']);
+        $router = new Router($middlewares);
+        $router->bind('foo', 'FooController@foo');
+        $router->group(
+            'mid2',
+            function (Router $router) {
+                $router->bind('bar', 'BarController@bar');
+            }
+        );
+        $this->assertEquals(['mid1'], $router->resolve('foo')->getMiddlewaresCollection()->getMiddlewares());
+        $this->assertEquals(['mid1', 'mid2'], $router->resolve('bar')->getMiddlewaresCollection()->getMiddlewares());
+    }
 }

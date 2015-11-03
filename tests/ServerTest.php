@@ -208,9 +208,7 @@ class ServerTest extends PHPUnit_Framework_TestCase
         $server->router()
             ->bindController('foo', ServerTest_FooController::class)
             ->group(
-                function (MiddlewaresConfigurationInterface $middlewares) {
-                    $middlewares->addMiddleware(ServerTest_Middleware_DenyByContext::class);
-                },
+                ServerTest_Middleware_DenyByContext::class,
                 function (Server\Router $router) {
                     $router->bind('bar', ServerTest_BarController::class);
                 }

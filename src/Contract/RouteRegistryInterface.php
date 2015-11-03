@@ -32,11 +32,11 @@ interface RouteRegistryInterface
     public function bindController($namespace, $controller);
 
     /**
-     * @param callable $middlewaresConfigurator
+     * @param callable|array|string|null $middlewaresConfigurator
      * @param callable $routesConfigurator
      * @return $this
      */
-    public function group(callable $middlewaresConfigurator, callable $routesConfigurator);
+    public function group($middlewaresConfigurator = null, callable $routesConfigurator);
 
     /**
      * @param string $method
