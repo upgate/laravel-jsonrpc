@@ -1,4 +1,4 @@
-# JSON-RPC Server for Laravel 5.1
+# JSON-RPC Server for Laravel 5
 
 ## Quick How-To
 
