@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Upgate\LaravelJsonRpc\Server;
 
@@ -30,10 +31,10 @@ class Request implements RequestContract, ExecutableInterface
      * @param RequestParams|null $params
      * @param string|int|null $id
      */
-    public function __construct($method, RequestParams $params = null, $id = null)
+    public function __construct(string $method, RequestParams $params = null, $id = null)
     {
         $this->method = (string)$method;
-        $this->params = $params;
+        $this->params = $params ?: RequestParams::constructEmpty();
         if (null !== $id) {
             if (!is_int($id)) {
                 $id = (string)$id;
@@ -45,15 +46,15 @@ class Request implements RequestContract, ExecutableInterface
     /**
      * @return string
      */
-    public function getMethod()
+    public function getMethod(): string
     {
         return $this->method;
     }
 
     /**
-     * @return RequestParams|null
+     * @return RequestParams
      */
-    public function getParams()
+    public function getParams(): RequestParams
     {
         return $this->params;
     }
@@ -68,7 +69,7 @@ class Request implements RequestContract, ExecutableInterface
 
     /**
      * @param RequestExecutorInterface $executor
-     * @return Jsonable|null
+     * @return Jsonable
      */
     public function executeWith(RequestExecutorInterface $executor)
     {

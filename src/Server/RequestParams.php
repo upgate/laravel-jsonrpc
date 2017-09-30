@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Upgate\LaravelJsonRpc\Server;
 
@@ -9,10 +10,10 @@ final class RequestParams
 
     private $areParamsNamed;
 
-    private function __construct(array $params, $areParamsNamed = false)
+    private function __construct(array $params, bool $areParamsNamed = false)
     {
         $this->params = $params;
-        $this->areParamsNamed = (bool)$areParamsNamed;
+        $this->areParamsNamed = $areParamsNamed;
     }
 
     public static function constructNamed(array $params)
@@ -25,10 +26,15 @@ final class RequestParams
         return new self(array_values($params), false);
     }
 
+    public static function constructEmpty()
+    {
+        return new self([]);
+    }
+
     /**
      * @return array
      */
-    public function getParams()
+    public function getParams(): array
     {
         return $this->params;
     }
@@ -36,7 +42,7 @@ final class RequestParams
     /**
      * @return bool
      */
-    public function areParamsNamed()
+    public function areParamsNamed(): bool
     {
         return $this->areParamsNamed;
     }

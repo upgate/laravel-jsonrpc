@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Upgate\LaravelJsonRpc\Contract;
 
@@ -10,12 +11,12 @@ interface RequestInterface
     /**
      * @return string
      */
-    public function getMethod();
+    public function getMethod(): string;
 
     /**
-     * @return RequestParams|null
+     * @return RequestParams
      */
-    public function getParams();
+    public function getParams(): RequestParams;
 
     /**
      * @return null|string|int

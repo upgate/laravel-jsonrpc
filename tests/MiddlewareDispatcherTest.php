@@ -1,10 +1,11 @@
 <?php
+declare(strict_types=1);
 
 use Illuminate\Contracts\Container\Container;
-use Upgate\LaravelJsonRpc\Server\MiddlewareDispatcher;
+use Upgate\LaravelJsonRpc\Server\MiddlewarePipelineDispatcher;
 use Upgate\LaravelJsonRpc\Contract\MiddlewaresConfigurationInterface;
 
-class MiddlewareDispatcherTest extends PHPUnit_Framework_TestCase
+class MiddlewareDispatcherTest extends \PHPUnit\Framework\TestCase
 {
 
     public function testNoMiddlewares()
@@ -16,7 +17,7 @@ class MiddlewareDispatcherTest extends PHPUnit_Framework_TestCase
         $middlewares->method('getMiddlewares')->willReturn([]);
         /** @var MiddlewaresConfigurationInterface $middlewares */
 
-        $middlewareDispatcher = new MiddlewareDispatcher($container);
+        $middlewareDispatcher = new MiddlewarePipelineDispatcher($container);
         $result = $middlewareDispatcher->dispatch(
             $middlewares,
             42,
@@ -46,7 +47,7 @@ class MiddlewareDispatcherTest extends PHPUnit_Framework_TestCase
         ]);
         /** @var MiddlewaresConfigurationInterface $middlewares */
 
-        $middlewareDispatcher = new MiddlewareDispatcher($container);
+        $middlewareDispatcher = new MiddlewarePipelineDispatcher($container);
         $result = $middlewareDispatcher->dispatch(
             $middlewares,
             42,
@@ -77,7 +78,7 @@ class MiddlewareDispatcherTest extends PHPUnit_Framework_TestCase
         ]);
         /** @var MiddlewaresConfigurationInterface $middlewares */
 
-        $middlewareDispatcher = new MiddlewareDispatcher($container);
+        $middlewareDispatcher = new MiddlewarePipelineDispatcher($container);
         $result = $middlewareDispatcher->dispatch(
             $middlewares,
             42,

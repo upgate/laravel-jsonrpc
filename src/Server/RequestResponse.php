@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Upgate\LaravelJsonRpc\Server;
 
@@ -14,34 +15,6 @@ final class RequestResponse implements Jsonable, Arrayable
 
     /**
      * @param string|int|null $id
-     * @param \Exception $exception
-     * @return RequestResponse
-     */
-    public static function constructExceptionErrorResponse($id, \Exception $exception)
-    {
-        return self::constructErrorResponse($id, $exception->getMessage(), $exception->getCode());
-    }
-
-    /**
-     * @param string|int|null $id
-     * @param string $message
-     * @param int $code
-     * @return RequestResponse
-     */
-    public static function constructErrorResponse($id, $message, $code = 0)
-    {
-        return new self(
-            $id,
-            [
-                'code'    => $code ?: -32603,
-                'message' => (string)$message
-            ],
-            true
-        );
-    }
-
-    /**
-     * @param string|int|null $id
      * @param mixed $result
      * @param bool $isError
      */
@@ -50,6 +23,39 @@ final class RequestResponse implements Jsonable, Arrayable
         $this->id = $id;
         $this->result = $result;
         $this->isError = (bool)$isError;
+    }
+
+    /**
+     * @param string|int|null $id
+     * @param \Exception $exception
+     * @return RequestResponse
+     */
+    public static function constructExceptionErrorResponse($id, \Exception $exception): RequestResponse
+    {
+        return self::constructErrorResponse($id, $exception->getMessage(), $exception->getCode());
+    }
+
+    /**
+     * @param string|int|null $id
+     * @param string $message
+     * @param int $code
+     * @param array $extras
+     * @return RequestResponse
+     */
+    public static function constructErrorResponse(
+        $id,
+        string $message,
+        int $code = ErrorCode::INTERNAL_ERROR,
+        array $extras = []
+    ): RequestResponse {
+        return new self(
+            $id,
+            [
+                'code'    => $code,
+                'message' => (string)$message
+            ] + $extras,
+            true
+        );
     }
 
     /**

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Upgate\LaravelJsonRpc\Server;
 
@@ -9,17 +10,16 @@ final class ControllerBinding extends Binding
 
     private $defaultActionName;
 
-    public function __construct($binding, MiddlewaresCollection $middlewaresCollection, $defaultActionName = null)
-    {
+    public function __construct(
+        string $binding,
+        MiddlewaresCollection $middlewaresCollection,
+        string $defaultActionName = null
+    ) {
         parent::__construct($binding, $middlewaresCollection);
-        $this->defaultActionName = $defaultActionName ? (string)$defaultActionName : null;
+        $this->defaultActionName = $defaultActionName;
     }
 
-    /**
-     * @param string $method
-     * @return Route
-     */
-    public function resolveRoute($method)
+    public function resolveRoute(string $method): Route
     {
         $tokens = explode('.', $method, 2);
         if (!empty($tokens[1])) {
@@ -31,7 +31,7 @@ final class ControllerBinding extends Binding
         return new Route($this->controllerClass, $actionName, $this->getMiddlewaresCollection());
     }
 
-    protected function setBinding($binding)
+    protected function setBinding(string $binding): void
     {
         $this->controllerClass = $binding;
     }

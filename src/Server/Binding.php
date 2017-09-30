@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Upgate\LaravelJsonRpc\Server;
 
@@ -9,10 +10,15 @@ abstract class Binding
 
     private $middlewaresCollection;
 
-    public function __construct($binding, MiddlewaresCollection $middlewaresCollection)
+    public function __construct(string $binding, MiddlewaresCollection $middlewaresCollection)
     {
         $this->setBinding($binding);
         $this->setMiddlewaresCollection($middlewaresCollection);
+    }
+
+    public function getMiddlewaresCollection(): MiddlewaresCollection
+    {
+        return $this->middlewaresCollection;
     }
 
     public function setMiddlewaresCollection(MiddlewaresCollection $middlewaresCollection)
@@ -22,17 +28,8 @@ abstract class Binding
         return $this;
     }
 
-    public function getMiddlewaresCollection()
-    {
-        return $this->middlewaresCollection;
-    }
+    abstract public function resolveRoute(string $method): Route;
 
-    /**
-     * @param string $method
-     * @return Route
-     */
-    abstract public function resolveRoute($method);
-
-    abstract protected function setBinding($binding);
+    abstract protected function setBinding(string $binding): void;
 
 }

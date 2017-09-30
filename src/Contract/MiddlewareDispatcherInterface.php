@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Upgate\LaravelJsonRpc\Contract;
 
@@ -7,7 +8,7 @@ interface MiddlewareDispatcherInterface
 
     /**
      * @param MiddlewaresConfigurationInterface $middlewaresConfiguration
-     * @param $context
+     * @param mixed $context
      * @param callable $next
      * @return mixed
      */

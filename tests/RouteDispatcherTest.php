@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 use Illuminate\Contracts\Container\Container;
 use Upgate\LaravelJsonRpc\Contract\RouteInterface;
@@ -6,7 +7,7 @@ use Upgate\LaravelJsonRpc\Exception\InvalidParamsException;
 use Upgate\LaravelJsonRpc\Server\RequestParams;
 use Upgate\LaravelJsonRpc\Server\RouteDispatcher;
 
-class RouteDispatcherTest extends PHPUnit_Framework_TestCase
+class RouteDispatcherTest extends \PHPUnit\Framework\TestCase
 {
 
     public function testWithNoArguments()
@@ -56,7 +57,7 @@ class RouteDispatcherTest extends PHPUnit_Framework_TestCase
             'Failed with all required params were provided'
         );
 
-        $this->setExpectedException(InvalidParamsException::class, '"bar" is required', -32602);
+        $this->expectException(InvalidParamsException::class);
         $routeDispatcher->dispatch(
             $route,
             RequestParams::constructPositional([1])
@@ -89,7 +90,7 @@ class RouteDispatcherTest extends PHPUnit_Framework_TestCase
             'Failed with all required params were provided'
         );
 
-        $this->setExpectedException(InvalidParamsException::class, '"bar" is required', -32602);
+        $this->expectException(InvalidParamsException::class);
         $routeDispatcher->dispatch(
             $route,
             RequestParams::constructPositional([1])
@@ -116,7 +117,7 @@ class RouteDispatcherTest extends PHPUnit_Framework_TestCase
         $result = $routeDispatcher->dispatch($route, RequestParams::constructPositional([2]));
         $this->assertEquals(['required' => 2, 'optional' => 'default'], $result, 'Failed with missing optional value');
 
-        $this->setExpectedException(InvalidParamsException::class, '"required" is required', -32602);
+        $this->expectException(InvalidParamsException::class);
         $routeDispatcher->dispatch($route, null);
     }
 
@@ -140,7 +141,7 @@ class RouteDispatcherTest extends PHPUnit_Framework_TestCase
         $result = $routeDispatcher->dispatch($route, RequestParams::constructNamed(['required' => 2]));
         $this->assertEquals(['required' => 2, 'optional' => 'default'], $result, 'Failed with missing optional value');
 
-        $this->setExpectedException(InvalidParamsException::class, '"required" is required', -32602);
+        $this->expectException(InvalidParamsException::class);
         $routeDispatcher->dispatch($route, null);
     }
 
@@ -190,7 +191,7 @@ class RouteDispatcherTest extends PHPUnit_Framework_TestCase
         $result = $routeDispatcher->dispatch($route, RequestParams::constructPositional([2]));
         $this->assertEquals(['required' => 2, 'optional' => 'default'], $result, 'Failed with missing optional value');
 
-        $this->setExpectedException(InvalidParamsException::class, '"required" is required', -32602);
+        $this->expectException(InvalidParamsException::class);
         $routeDispatcher->dispatch($route, null);
     }
 
@@ -222,7 +223,7 @@ class RouteDispatcherTest extends PHPUnit_Framework_TestCase
         $result = $routeDispatcher->dispatch($route, RequestParams::constructNamed(['required' => 2]));
         $this->assertEquals(['required' => 2, 'optional' => 'default'], $result, 'Failed with missing optional value');
 
-        $this->setExpectedException(InvalidParamsException::class, '"required" is required', -32602);
+        $this->expectException(InvalidParamsException::class);
         $routeDispatcher->dispatch($route, null);
     }
 

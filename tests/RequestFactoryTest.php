@@ -1,11 +1,12 @@
 <?php
+declare(strict_types=1);
 
 use Upgate\LaravelJsonRpc\Exception\BadRequestException;
 use Upgate\LaravelJsonRpc\Server\Request;
 use Upgate\LaravelJsonRpc\Server\Batch;
 use Upgate\LaravelJsonRpc\Server\RequestFactory;
 
-class RequestFactoryTest extends PHPUnit_Framework_TestCase
+class RequestFactoryTest extends \PHPUnit\Framework\TestCase
 {
 
     public function testCreateRequestWithoutParameters()
@@ -17,7 +18,7 @@ class RequestFactoryTest extends PHPUnit_Framework_TestCase
         $requestFactory = new RequestFactory();
         $request = $requestFactory->createRequest($requestData);
         $this->assertEquals('foo', $request->getMethod());
-        $this->assertNull($request->getParams());
+        $this->assertEmpty($request->getParams()->getParams());
     }
 
     public function testCreateRequestWithoutId()
@@ -90,7 +91,7 @@ class RequestFactoryTest extends PHPUnit_Framework_TestCase
             'method'  => 'foo'
         ];
         $requestFactory = new RequestFactory();
-        $this->setExpectedException(BadRequestException::class);
+        $this->expectException(BadRequestException::class);
         $requestFactory->createRequest($requestData);
     }
 
@@ -100,7 +101,7 @@ class RequestFactoryTest extends PHPUnit_Framework_TestCase
             'method' => 'foo'
         ];
         $requestFactory = new RequestFactory();
-        $this->setExpectedException(BadRequestException::class);
+        $this->expectException(BadRequestException::class);
         $requestFactory->createRequest($requestData);
     }
 
@@ -110,7 +111,7 @@ class RequestFactoryTest extends PHPUnit_Framework_TestCase
             'jsonrpc' => '2.0'
         ];
         $requestFactory = new RequestFactory();
-        $this->setExpectedException(BadRequestException::class);
+        $this->expectException(BadRequestException::class);
         $requestFactory->createRequest($requestData);
     }
 

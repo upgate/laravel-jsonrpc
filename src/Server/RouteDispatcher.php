@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Upgate\LaravelJsonRpc\Server;
 
@@ -27,7 +28,7 @@ final class RouteDispatcher implements RouteDispatcherInterface
      * @param Container $container
      * @param string|null $controllerNamespace
      */
-    public function __construct(Container $container, $controllerNamespace = null)
+    public function __construct(Container $container, string $controllerNamespace = null)
     {
         $this->container = $container;
         $this->setControllerNamespace($controllerNamespace);
@@ -35,11 +36,12 @@ final class RouteDispatcher implements RouteDispatcherInterface
 
     /**
      * @param string|null $controllerNamespace
-     * @return $this
+     * @return RouteDispatcherInterface
      */
-    public function setControllerNamespace($controllerNamespace = null)
+    public function setControllerNamespace(string $controllerNamespace = null): RouteDispatcherInterface
     {
-        $this->controllerNamespace = $controllerNamespace ? (string)$controllerNamespace : null;
+        $this->controllerNamespace = $controllerNamespace;
+
         return $this;
     }
 

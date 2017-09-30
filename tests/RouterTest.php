@@ -1,10 +1,11 @@
 <?php
+declare(strict_types=1);
 
 use Upgate\LaravelJsonRpc\Exception\RouteNotFoundException;
 use Upgate\LaravelJsonRpc\Server\MiddlewaresCollection;
 use Upgate\LaravelJsonRpc\Server\Router;
 
-class RouterTest extends PHPUnit_Framework_TestCase
+class RouterTest extends \PHPUnit\Framework\TestCase
 {
 
     public function testMethodBinding()
@@ -59,7 +60,7 @@ class RouterTest extends PHPUnit_Framework_TestCase
     public function testBindingNotFound()
     {
         $router = new Router();
-        $this->setExpectedException(RouteNotFoundException::class);
+        $this->expectException(RouteNotFoundException::class);
         $router->resolve('foo');
     }
 

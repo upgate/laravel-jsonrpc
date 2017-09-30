@@ -1,8 +1,10 @@
 <?php
+declare(strict_types=1);
 
 namespace Upgate\LaravelJsonRpc\Server;
 
 use Upgate\LaravelJsonRpc\Contract\RequestFactoryInterface as RequestFactoryContract;
+use Upgate\LaravelJsonRpc\Contract\RequestInterface;
 use Upgate\LaravelJsonRpc\Exception\BadRequestException;
 use Upgate\LaravelJsonRpc\Contract\ExecutableInterface;
 
@@ -13,7 +15,7 @@ class RequestFactory implements RequestFactoryContract
      * @param string $payloadJson
      * @return ExecutableInterface
      */
-    public function createFromPayload($payloadJson)
+    public function createFromPayload(string $payloadJson): ExecutableInterface
     {
         try {
             $payload = json_decode($payloadJson);
@@ -28,21 +30,23 @@ class RequestFactory implements RequestFactoryContract
 
             return new Batch($payload, $this);
         } elseif (is_object($payload)) {
-            return $this->createRequest($payload);
+            return $this->createSingleRequest($payload);
         } else {
             throw new BadRequestException();
         }
     }
 
     /**
-     * @param object $requestData
-     * @return Request
+     * @param \stdClass $requestData
+     * @return RequestInterface
      */
-    public function createRequest($requestData)
+    public function createRequest(\stdClass $requestData): RequestInterface
     {
-        if (!is_object($requestData)) {
-            throw new BadRequestException();
-        }
+        return $this->createSingleRequest($requestData);
+    }
+
+    private function createSingleRequest(\stdClass $requestData): Request
+    {
         if (!isset($requestData->jsonrpc) || $requestData->jsonrpc !== "2.0") {
             throw new BadRequestException();
         }

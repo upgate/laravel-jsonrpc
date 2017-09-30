@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Upgate\LaravelJsonRpc\Server;
 
@@ -31,27 +32,16 @@ final class MiddlewaresCollection implements MiddlewaresConfigurationInterface
     /**
      * @return bool
      */
-    public function isEmpty()
+    public function isEmpty(): bool
     {
         return 0 === count($this->middlewares);
     }
 
     /**
-     * @param array $middlewares
-     * @return $this
-     */
-    public function setMiddlewares(array $middlewares = [])
-    {
-        $this->middlewares = $middlewares;
-
-        return $this;
-    }
-
-    /**
      * @param string $middleware
-     * @return $this
+     * @return MiddlewaresConfigurationInterface
      */
-    public function addMiddleware($middleware)
+    public function addMiddleware(string $middleware): MiddlewaresConfigurationInterface
     {
         $this->middlewares[] = $middleware;
 
@@ -61,18 +51,31 @@ final class MiddlewaresCollection implements MiddlewaresConfigurationInterface
     /**
      * @return string[]
      */
-    public function getMiddlewares()
+    public function getMiddlewares(): array
     {
         return $this->aliasesRegistry ? $this->aliasesRegistry->resolveAliases($this->middlewares) : $this->middlewares;
     }
 
     /**
-     * @param MiddlewareAliasRegistryInterface|null $aliases
-     * @return $this
+     * @param array $middlewares
+     * @return MiddlewaresConfigurationInterface
      */
-    public function setMiddlewareAliases(MiddlewareAliasRegistryInterface $aliases = null)
+    public function setMiddlewares(array $middlewares = []): MiddlewaresConfigurationInterface
     {
+        $this->middlewares = $middlewares;
+
+        return $this;
+    }
+
+    /**
+     * @param MiddlewareAliasRegistryInterface|null $aliases
+     * @return MiddlewaresConfigurationInterface
+     */
+    public function setMiddlewareAliases(MiddlewareAliasRegistryInterface $aliases = null
+    ): MiddlewaresConfigurationInterface {
         $this->aliasesRegistry = $aliases;
+
+        return $this;
     }
 
 }

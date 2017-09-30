@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Upgate\LaravelJsonRpc\Server;
 
@@ -71,7 +72,7 @@ class Server implements ServerInterface, RequestExecutorInterface
     /**
      * @return RouteRegistryInterface
      */
-    public function router()
+    public function router(): RouteRegistryInterface
     {
         return $this->router;
     }
@@ -80,9 +81,9 @@ class Server implements ServerInterface, RequestExecutorInterface
      * @param string $exceptionClass
      * @param callable $handler
      * @param bool $first
-     * @return $this
+     * @return ServerInterface
      */
-    public function onException($exceptionClass, $handler, $first = false)
+    public function onException(string $exceptionClass, callable $handler, bool $first = false): ServerInterface
     {
         if ($first) {
             $this->exceptionHandlers = [$exceptionClass => $handler] + $this->exceptionHandlers;
@@ -95,9 +96,9 @@ class Server implements ServerInterface, RequestExecutorInterface
 
     /**
      * @param string|null $controllerNamespace
-     * @return $this
+     * @return ServerInterface
      */
-    public function setControllerNamespace($controllerNamespace = null)
+    public function setControllerNamespace(string $controllerNamespace = null): ServerInterface
     {
         $this->routeDispatcher->setControllerNamespace($controllerNamespace);
 
@@ -106,9 +107,9 @@ class Server implements ServerInterface, RequestExecutorInterface
 
     /**
      * @param array $aliases
-     * @return $this
+     * @return ServerInterface
      */
-    public function registerMiddlewareAliases(array $aliases)
+    public function registerMiddlewareAliases(array $aliases): ServerInterface
     {
         $this->router->setMiddlewareAliases(new MiddlewareAliasRegistry($aliases));
 
@@ -119,16 +120,16 @@ class Server implements ServerInterface, RequestExecutorInterface
      * @param string $payload
      * @return void
      */
-    public function setPayload($payload)
+    public function setPayload(string $payload): void
     {
         $this->payload = $payload;
     }
 
     /**
-     * @param null $middlewareContext
+     * @param mixed $middlewareContext
      * @return JsonResponse
      */
-    public function run($middlewareContext = null)
+    public function run($middlewareContext = null): JsonResponse
     {
         $this->middlewareContext = $middlewareContext;
 
@@ -181,7 +182,7 @@ class Server implements ServerInterface, RequestExecutorInterface
     /**
      * @param \Exception $e
      * @param RequestInterface|null $request
-     * @return null|RequestResponse
+     * @return RequestResponse|null
      */
     private function handleException(\Exception $e, RequestInterface $request = null)
     {

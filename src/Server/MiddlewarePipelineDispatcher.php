@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Upgate\LaravelJsonRpc\Server;
 
@@ -7,7 +8,7 @@ use Illuminate\Pipeline\Pipeline;
 use Upgate\LaravelJsonRpc\Contract\MiddlewareDispatcherInterface;
 use Upgate\LaravelJsonRpc\Contract\MiddlewaresConfigurationInterface;
 
-final class MiddlewareDispatcher implements MiddlewareDispatcherInterface
+final class MiddlewarePipelineDispatcher implements MiddlewareDispatcherInterface
 {
 
     /**
@@ -25,7 +26,7 @@ final class MiddlewareDispatcher implements MiddlewareDispatcherInterface
 
     /**
      * @param MiddlewaresConfigurationInterface $middlewaresConfiguration
-     * @param $context
+     * @param mixed $context
      * @param callable $next
      * @return mixed
      */

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Upgate\LaravelJsonRpc\Contract;
 
@@ -10,25 +11,26 @@ interface MiddlewareAliasRegistryInterface
      * @param string $name
      * @return $this
      */
-    public function registerAlias($alias, $name);
+    public function registerAlias(string $alias, string $name): MiddlewareAliasRegistryInterface;
 
     /**
      * @param array $aliases
      * @param bool $replace
      * @return $this
      */
-    public function registerAliases(array $aliases, $replace = false);
+    public function registerAliases(array $aliases, bool $replace = false): MiddlewareAliasRegistryInterface;
 
     /**
      * @param string $alias
-     * @return string|null
+     * @return string
+     * @throws \InvalidArgumentException
      */
-    public function findNameByAlias($alias);
+    public function findNameByAlias(string $alias): string;
 
     /**
-     * @param array $middlewares
+     * @param string[] $middlewares
      * @return array
      */
-    public function resolveAliases(array $middlewares);
+    public function resolveAliases(array $middlewares): array;
 
 }

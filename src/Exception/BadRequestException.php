@@ -1,18 +1,21 @@
 <?php
+declare(strict_types=1);
 
 namespace Upgate\LaravelJsonRpc\Exception;
+
+use Upgate\LaravelJsonRpc\Server\ErrorCode;
 
 final class BadRequestException extends JsonRpcException
 {
 
-    protected function getDefaultMessage()
+    protected function getDefaultMessage(): string
     {
         return 'Invalid Request';
     }
 
-    protected function getDefaultCode()
+    protected function getDefaultCode(): int
     {
-        return -32600;
+        return ErrorCode::INVALID_REQUEST;
     }
 
 }

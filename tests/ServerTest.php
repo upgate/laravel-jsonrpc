@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 use Illuminate\Contracts\Container\Container;
 use Psr\Log\LoggerInterface;
@@ -8,7 +9,7 @@ use Upgate\LaravelJsonRpc\Server;
 /**
  * Not a real unit-test, more like a functional library test
  */
-class ServerTest extends PHPUnit_Framework_TestCase
+class ServerTest extends \PHPUnit\Framework\TestCase
 {
 
     public function testSingleRequest()
@@ -59,7 +60,7 @@ class ServerTest extends PHPUnit_Framework_TestCase
 
         $expectedResponseData = (object)[
             'jsonrpc' => '2.0',
-            'result'  => (object)['aborted_by_middleware' => true],
+            'result'  => (object)['aborted_by_middleware' => true, 'context' => null],
             'id'      => 1
         ];
         $this->assertEquals($expectedResponseData, json_decode($response->getContent()));
@@ -72,7 +73,7 @@ class ServerTest extends PHPUnit_Framework_TestCase
         $server->registerMiddlewareAliases(['abort' => ServerTest_Middleware_Abort::class]);
 
         $server->router()
-            ->addMiddleware(['abort'])
+            ->addMiddleware('abort')
             ->bindController('foo', 'ServerTest_FooController');
 
         $server->setPayload(
@@ -89,7 +90,43 @@ class ServerTest extends PHPUnit_Framework_TestCase
 
         $expectedResponseData = (object)[
             'jsonrpc' => '2.0',
-            'result'  => (object)['aborted_by_middleware' => true],
+            'result'  => (object)['aborted_by_middleware' => true, 'context' => null],
+            'id'      => 1
+        ];
+        $this->assertEquals($expectedResponseData, json_decode($response->getContent()));
+    }
+
+    public function testSingleRequestWithMultipleMiddlewareAliases()
+    {
+        $server = $this->assembleServer();
+
+        $server->registerMiddlewareAliases(
+            [
+                'foo' => ServerTest_Middleware_AddFoo::class,
+                'bar' => ServerTest_Middleware_AddBar::class,
+                'abort' => ServerTest_Middleware_Abort::class,
+            ]
+        );
+
+        $server->router()
+            ->addMiddlewares(['foo', 'bar', 'abort'])
+            ->bindController('foo', 'ServerTest_FooController');
+
+        $server->setPayload(
+            json_encode(
+                [
+                    'jsonrpc' => '2.0',
+                    'method'  => 'foo',
+                    'id'      => 1
+                ]
+            )
+        );
+
+        $response = $server->run();
+
+        $expectedResponseData = (object)[
+            'jsonrpc' => '2.0',
+            'result'  => (object)['aborted_by_middleware' => true, 'context' => (object)['foo' => true, 'bar' => true]],
             'id'      => 1
         ];
         $this->assertEquals($expectedResponseData, json_decode($response->getContent()));
@@ -269,7 +306,8 @@ class ServerTest extends PHPUnit_Framework_TestCase
 
     public function testControllerNamespace()
     {
-        eval('
+        eval(
+        '
             namespace ServerTestNs {
                 class ServerTest_FooController {
                     public function index() {
@@ -277,7 +315,8 @@ class ServerTest extends PHPUnit_Framework_TestCase
                     }
                 }
             }
-        ');
+        '
+        );
 
         $server = $this->assembleServer();
 
@@ -323,7 +362,7 @@ class ServerTest extends PHPUnit_Framework_TestCase
             new Server\RequestFactory(),
             new Server\Router(),
             new Server\RouteDispatcher($this->constructContainerMock()),
-            new Server\MiddlewareDispatcher($this->constructContainerMock()),
+            new Server\MiddlewarePipelineDispatcher($this->constructContainerMock()),
             $this->constructLoggerMock()
         );
     }
@@ -342,6 +381,7 @@ class ServerTest extends PHPUnit_Framework_TestCase
             )
         );
 
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
         return $container;
     }
 
@@ -350,6 +390,7 @@ class ServerTest extends PHPUnit_Framework_TestCase
      */
     private function constructLoggerMock()
     {
+        /** @noinspection PhpIncompatibleReturnTypeInspection */
         return $this->getMockBuilder(LoggerInterface::class)->getMock();
     }
 
@@ -385,12 +426,42 @@ class ServerTest_BarController
 
 }
 
+class ServerTest_Middleware_AddFoo
+{
+
+    public function handle($context, callable $next)
+    {
+        if (!is_object($context)) {
+            $context = new \stdClass;
+        }
+        $context->foo = true;
+
+        return $next($context);
+    }
+
+}
+
+class ServerTest_Middleware_AddBar
+{
+
+    public function handle($context, callable $next)
+    {
+        if (!is_object($context)) {
+            $context = new \stdClass;
+        }
+        $context->bar = true;
+
+        return $next($context);
+    }
+
+}
+
 class ServerTest_Middleware_Abort
 {
 
-    public function handle()
+    public function handle($context)
     {
-        return ['aborted_by_middleware' => true];
+        return ['aborted_by_middleware' => true, 'context' => $context];
     }
 
 }

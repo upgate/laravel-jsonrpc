@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Upgate\LaravelJsonRpc\Server;
 
@@ -7,6 +8,7 @@ use Illuminate\Contracts\Support\Jsonable;
 use Upgate\LaravelJsonRpc\Contract\ExecutableInterface;
 use Upgate\LaravelJsonRpc\Contract\RequestExecutorInterface;
 use Upgate\LaravelJsonRpc\Contract\RequestFactoryInterface;
+use Upgate\LaravelJsonRpc\Exception\BadRequestException;
 
 final class Batch implements ExecutableInterface, Arrayable
 {
@@ -31,9 +33,16 @@ final class Batch implements ExecutableInterface, Arrayable
     public function executeWith(RequestExecutorInterface $executor)
     {
         /** @var Request[] $requests */
-        $requests = array_map(function($requestData) {
-            return $this->requestFactory->createRequest($requestData);
-        }, $this->batch);
+        $requests = array_map(
+            function ($requestData) {
+                if (!is_object($requestData)) {
+                    throw new BadRequestException();
+                }
+
+                return $this->requestFactory->createRequest($requestData);
+            },
+            $this->batch
+        );
 
         $response = new BatchResponse();
 

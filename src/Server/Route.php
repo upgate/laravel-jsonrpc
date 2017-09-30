@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Upgate\LaravelJsonRpc\Server;
 
@@ -17,17 +18,20 @@ final class Route implements RouteInterface
      * @param string $actionName
      * @param MiddlewaresConfigurationInterface $middlewaresCollection
      */
-    public function __construct($controllerClass, $actionName, MiddlewaresConfigurationInterface $middlewaresCollection)
-    {
-        $this->controllerClass = (string)$controllerClass;
-        $this->actionName = (string)$actionName;
+    public function __construct(
+        string $controllerClass,
+        string $actionName,
+        MiddlewaresConfigurationInterface $middlewaresCollection
+    ) {
+        $this->controllerClass = $controllerClass;
+        $this->actionName = $actionName;
         $this->middlewaresCollection = $middlewaresCollection;
     }
 
     /**
      * @return string
      */
-    public function getControllerClass()
+    public function getControllerClass(): string
     {
         return $this->controllerClass;
     }
@@ -35,7 +39,7 @@ final class Route implements RouteInterface
     /**
      * @return string
      */
-    public function getActionName()
+    public function getActionName(): string
     {
         return $this->actionName;
     }
@@ -43,7 +47,7 @@ final class Route implements RouteInterface
     /**
      * @return MiddlewaresConfigurationInterface
      */
-    public function getMiddlewaresCollection()
+    public function getMiddlewaresCollection(): MiddlewaresConfigurationInterface
     {
         return $this->middlewaresCollection;
     }

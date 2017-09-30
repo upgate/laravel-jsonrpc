@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Upgate\LaravelJsonRpc\Server;
 
@@ -9,16 +10,12 @@ final class MethodBinding extends Binding
 
     private $actionName;
 
-    /**
-     * @param string $method
-     * @return Route
-     */
-    public function resolveRoute($method)
+    public function resolveRoute(string $method): Route
     {
         return new Route($this->controllerClass, $this->actionName, $this->getMiddlewaresCollection());
     }
 
-    protected function setBinding($binding)
+    protected function setBinding(string $binding): void
     {
         $tokens = array_filter(explode('@', $binding, 2));
         switch (count($tokens)) {

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Upgate\LaravelJsonRpc\Contract;
 
@@ -8,16 +9,16 @@ interface RouteInterface
     /**
      * @return string
      */
-    public function getControllerClass();
+    public function getControllerClass(): string;
 
     /**
      * @return string
      */
-    public function getActionName();
+    public function getActionName(): string;
 
     /**
      * @return MiddlewaresConfigurationInterface
      */
-    public function getMiddlewaresCollection();
+    public function getMiddlewaresCollection(): MiddlewaresConfigurationInterface;
 
 }

@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Upgate\LaravelJsonRpc\Contract;
 
@@ -9,12 +10,12 @@ interface RequestFactoryInterface
      * @param string $payloadJson
      * @return ExecutableInterface
      */
-    public function createFromPayload($payloadJson);
+    public function createFromPayload(string $payloadJson): ExecutableInterface;
 
     /**
-     * @param object $requestData
+     * @param \stdClass $requestData
      * @return RequestInterface
      */
-    public function createRequest($requestData);
+    public function createRequest(\stdClass $requestData): RequestInterface;
 
 }

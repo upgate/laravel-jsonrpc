@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Upgate\LaravelJsonRpc\Contract;
 
@@ -18,6 +19,6 @@ interface RouteDispatcherInterface
      * @param string|null $controllerNamespace
      * @return $this
      */
-    public function setControllerNamespace($controllerNamespace = null);
+    public function setControllerNamespace(string $controllerNamespace = null): RouteDispatcherInterface;
 
 }

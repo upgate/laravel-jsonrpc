@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Upgate\LaravelJsonRpc\Contract;
 
@@ -10,7 +11,7 @@ interface ServerInterface
     /**
      * @return RouteRegistryInterface
      */
-    public function router();
+    public function router(): RouteRegistryInterface;
 
     /**
      * @param string $exceptionClass
@@ -18,30 +19,30 @@ interface ServerInterface
      * @param bool $first
      * @return $this
      */
-    public function onException($exceptionClass, $handler, $first = false);
+    public function onException(string $exceptionClass, callable $handler, bool $first = false): ServerInterface;
 
     /**
      * @param array $aliases
      * @return $this
      */
-    public function registerMiddlewareAliases(array $aliases);
+    public function registerMiddlewareAliases(array $aliases): ServerInterface;
 
     /**
      * @param string $payload
      * @return void
      */
-    public function setPayload($payload);
+    public function setPayload(string $payload): void;
 
     /**
      * @param string|null $controllerNamespace
      * @return $this
      */
-    public function setControllerNamespace($controllerNamespace = null);
+    public function setControllerNamespace(string $controllerNamespace = null): ServerInterface;
 
     /**
-     * @param $middlewareContext
+     * @param mixed $middlewareContext
      * @return JsonResponse
      */
-    public function run($middlewareContext = null);
+    public function run($middlewareContext = null): JsonResponse;
 
 }

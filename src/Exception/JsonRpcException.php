@@ -1,11 +1,12 @@
 <?php
+declare(strict_types=1);
 
 namespace Upgate\LaravelJsonRpc\Exception;
 
 abstract class JsonRpcException extends \RuntimeException
 {
 
-    public function __construct($message = "", $code = 0, \Exception $previous = null)
+    public function __construct(string $message = "", int $code = 0, \Exception $previous = null)
     {
         parent::__construct(
             $message ?: $this->getDefaultMessage(),
@@ -14,8 +15,8 @@ abstract class JsonRpcException extends \RuntimeException
         );
     }
 
-    abstract protected function getDefaultMessage();
+    abstract protected function getDefaultMessage(): string;
 
-    abstract protected function getDefaultCode();
+    abstract protected function getDefaultCode(): int;
 
 }

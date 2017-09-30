@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace Upgate\LaravelJsonRpc\Server;
 
@@ -30,9 +31,9 @@ final class Router implements RouteRegistryInterface
     /**
      * @param string $method
      * @param string $binding
-     * @return $this
+     * @return RouteRegistryInterface
      */
-    public function bind($method, $binding)
+    public function bind(string $method, string $binding): RouteRegistryInterface
     {
         $this->methodBindings[strtolower($method)] = new MethodBinding($binding, $this->middlewaresCollection);
 
@@ -42,9 +43,9 @@ final class Router implements RouteRegistryInterface
     /**
      * @param string $namespace
      * @param string $controller
-     * @return $this
+     * @return RouteRegistryInterface
      */
-    public function bindController($namespace, $controller)
+    public function bindController(string $namespace, string $controller): RouteRegistryInterface
     {
         $this->controllerBindings[strtolower($namespace)] = new ControllerBinding(
             $controller,
@@ -57,9 +58,9 @@ final class Router implements RouteRegistryInterface
     /**
      * @param callable|string|array|null $middlewaresConfigurator
      * @param callable $routesConfigurator
-     * @return $this
+     * @return RouteRegistryInterface
      */
-    public function group($middlewaresConfigurator = null, callable $routesConfigurator)
+    public function group($middlewaresConfigurator = null, callable $routesConfigurator): RouteRegistryInterface
     {
         $middlewaresSubcollection = $this->middlewaresCollection ? clone $this->middlewaresCollection : null;
         if (null !== $middlewaresConfigurator) {
@@ -82,20 +83,30 @@ final class Router implements RouteRegistryInterface
      * @param string $method
      * @return RouteContract
      */
-    public function resolve($method)
+    public function resolve(string $method): RouteContract
     {
         return $this->findBinding($method)->resolveRoute($method);
     }
 
     /**
-     * @param array|string $middleware
-     * @return $this
+     * @param string $middleware
+     * @return RouteRegistryInterface
      */
-    public function addMiddleware($middleware)
+    public function addMiddleware(string $middleware): RouteRegistryInterface
     {
-        $middlewares = (array)$middleware;
+        $this->middlewaresCollection->addMiddleware($middleware);
+
+        return $this;
+    }
+
+    /**
+     * @param array $middlewares
+     * @return RouteRegistryInterface
+     */
+    public function addMiddlewares(array $middlewares): RouteRegistryInterface
+    {
         foreach ($middlewares as $middleware) {
-            $this->middlewaresCollection->addMiddleware($middleware);
+            $this->addMiddleware($middleware);
         }
 
         return $this;
@@ -103,9 +114,9 @@ final class Router implements RouteRegistryInterface
 
     /**
      * @param MiddlewareAliasRegistryInterface|null $aliases
-     * @return $this
+     * @return RouteRegistryInterface
      */
-    public function setMiddlewareAliases(MiddlewareAliasRegistryInterface $aliases = null)
+    public function setMiddlewareAliases(MiddlewareAliasRegistryInterface $aliases = null): RouteRegistryInterface
     {
         $this->middlewaresCollection->setMiddlewareAliases($aliases);
 
@@ -125,7 +136,7 @@ final class Router implements RouteRegistryInterface
      * @param $method
      * @return Binding
      */
-    private function findBinding($method)
+    private function findBinding(string $method): Binding
     {
         $method = strtolower($method);
         if (isset($this->methodBindings[$method])) {

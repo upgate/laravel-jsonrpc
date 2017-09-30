@@ -1,18 +1,21 @@
 <?php
+declare(strict_types=1);
 
 namespace Upgate\LaravelJsonRpc\Exception;
+
+use Upgate\LaravelJsonRpc\Server\ErrorCode;
 
 final class InvalidParamsException extends JsonRpcException
 {
 
-    protected function getDefaultMessage()
+    protected function getDefaultMessage(): string
     {
         return 'Invalid params';
     }
 
-    protected function getDefaultCode()
+    protected function getDefaultCode(): int
     {
-        return -32602;
+        return ErrorCode::INVALID_PARAMS;
     }
 
 }
