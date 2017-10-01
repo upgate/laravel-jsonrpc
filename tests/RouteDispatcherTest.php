@@ -362,6 +362,112 @@ class RouteDispatcherTest extends \PHPUnit\Framework\TestCase
         );
     }
 
+    public function testVarArgs()
+    {
+        $route = $this->getMockBuilder(RouteInterface::class)->getMock();
+        $route->method('getControllerClass')->willReturn(RouteDispatcherTest_StubController::class);
+        $route->method('getActionName')->willReturn('varArgs');
+        /** @var RouteInterface $route */
+
+        $container = $this->getMockBuilder(Container::class)->getMock();
+        $container->method('make')->with(RouteDispatcherTest_StubController::class)
+            ->willReturn(new RouteDispatcherTest_StubController());
+        /** @var Container $container */
+
+        $routeDispatcher = new RouteDispatcher($container);
+
+        $result = $routeDispatcher->dispatch(
+            $route,
+            RequestParams::constructNamed(['a' => 1, 'b' => 2])
+        );
+        $this->assertEquals(['args' =>  [1, 2]], $result);
+
+        $result = $routeDispatcher->dispatch(
+            $route,
+            RequestParams::constructPositional([1, 2])
+        );
+        $this->assertEquals(['args' =>  [1, 2]], $result);
+    }
+
+    public function testVarArgsEx()
+    {
+        $route = $this->getMockBuilder(RouteInterface::class)->getMock();
+        $route->method('getControllerClass')->willReturn(RouteDispatcherTest_StubController::class);
+        $route->method('getActionName')->willReturn('varArgsEx');
+        /** @var RouteInterface $route */
+
+        $container = $this->getMockBuilder(Container::class)->getMock();
+        $container->method('make')->with(RouteDispatcherTest_StubController::class)
+            ->willReturn(new RouteDispatcherTest_StubController());
+        /** @var Container $container */
+
+        $routeDispatcher = new RouteDispatcher($container);
+
+        $result = $routeDispatcher->dispatch(
+            $route,
+            RequestParams::constructNamed(['a' => 1, 'b' => 2, 'foo' => 'foo'])
+        );
+        $this->assertEquals(['args' =>  [1, 2], 'foo' => 'foo'], $result);
+
+        $result = $routeDispatcher->dispatch(
+            $route,
+            RequestParams::constructPositional([1, 2, 3])
+        );
+        $this->assertEquals(['args' =>  [2, 3], 'foo' => 1], $result);
+    }
+
+    public function testVarArgsCast()
+    {
+        $route = $this->getMockBuilder(RouteInterface::class)->getMock();
+        $route->method('getControllerClass')->willReturn(RouteDispatcherTest_StubController::class);
+        $route->method('getActionName')->willReturn('varArgsCast');
+        /** @var RouteInterface $route */
+
+        $container = $this->getMockBuilder(Container::class)->getMock();
+        $container->method('make')->with(RouteDispatcherTest_StubController::class)
+            ->willReturn(new RouteDispatcherTest_StubController());
+        /** @var Container $container */
+
+        $routeDispatcher = new RouteDispatcher($container);
+
+        $result = $routeDispatcher->dispatch(
+            $route,
+            RequestParams::constructNamed(['a' => '1', 'b' => 2])
+        );
+        $this->assertSame(['args' =>  [['1'], [2]]], $result);
+    }
+
+    public function testDependenciesWithVarArgs()
+    {
+        $route = $this->getMockBuilder(RouteInterface::class)->getMock();
+        $route->method('getControllerClass')->willReturn(RouteDispatcherTest_StubController::class);
+        $route->method('getActionName')->willReturn('depWithVarArgs');
+        /** @var RouteInterface $route */
+
+        $container = $this->getMockBuilder(Container::class)->getMock();
+        $container->method('make')->will(
+            $this->returnCallback(
+                function ($className) {
+                    return new $className;
+                }
+            )
+        );
+        /** @var Container $container */
+
+        $routeDispatcher = new RouteDispatcher($container);
+
+        $result = $routeDispatcher->dispatch(
+            $route,
+            RequestParams::constructNamed(['a' => 1, 'b' => 2, 'c' => 3])
+        );
+        $this->assertSame(['dep_class' => RouteDispatcherTest_Dependency1::class, 'args' =>  [1, 2, 3]], $result);
+
+        $result = $routeDispatcher->dispatch(
+            $route,
+            RequestParams::constructPositional([1, 2, 3])
+        );
+        $this->assertSame(['dep_class' => RouteDispatcherTest_Dependency1::class, 'args' =>  [1, 2, 3]], $result);
+    }
 }
 
 class RouteDispatcherTest_StubController
@@ -406,6 +512,25 @@ class RouteDispatcherTest_StubController
     public function strictTypesWithDefaults(int $required, int $i = 1, string $s = '1', array $a = [1])
     {
         return ['required' => $required, 'i' => $i, 's' => $s, 'a' => $a];
+    }
+
+    public function varArgs(...$args)
+    {
+        return ['args' => $args];
+    }
+
+    public function varArgsEx($foo, ...$args)
+    {
+        return ['args' => $args, 'foo' => $foo];
+    }
+
+    public function varArgsCast(array ...$args)
+    {
+        return ['args' => $args];
+    }
+
+    public function depWithVarArgs(RouteDispatcherTest_Dependency1 $dep, ...$args) {
+        return ['dep_class' => get_class($dep), 'args' => $args];
     }
 
 }

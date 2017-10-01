@@ -95,6 +95,13 @@ final class RouteDispatcher implements RouteDispatcherInterface
                 }
             } else {
                 if (null !== $params) {
+                    if ($parameter->isVariadic()) {
+                        foreach ($params as $key => $value) {
+                            $args[] = $this->cast($value, $parameter);
+                        }
+                        break;
+                    }
+
                     if ($areParamsNamed) {
                         $name = $parameter->getName();
                         if (array_key_exists($name, $params)) {
