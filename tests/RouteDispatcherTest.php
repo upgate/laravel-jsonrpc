@@ -290,6 +290,78 @@ class RouteDispatcherTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(100500, $result);
     }
 
+    public function testParameterTypeCasts()
+    {
+        $route = $this->getMockBuilder(RouteInterface::class)->getMock();
+        $route->method('getControllerClass')->willReturn(RouteDispatcherTest_StubController::class);
+        $route->method('getActionName')->willReturn('strictTypes');
+        /** @var RouteInterface $route */
+
+        $container = $this->getMockBuilder(Container::class)->getMock();
+        $container->method('make')->with(RouteDispatcherTest_StubController::class)
+            ->willReturn(new RouteDispatcherTest_StubController());
+        /** @var Container $container */
+
+        $routeDispatcher = new RouteDispatcher($container);
+
+        $result = $routeDispatcher->dispatch(
+            $route,
+            RequestParams::constructNamed(
+                ['i' => 10, 's' => 'foo', 'a' => []]
+            )
+        );
+        $this->assertSame(['i' => 10, 's' => 'foo', 'a' => []], $result);
+
+        $result = $routeDispatcher->dispatch(
+            $route,
+            RequestParams::constructNamed(
+                ['i' => '10', 's' => 1, 'a' => null]
+            )
+        );
+        $this->assertSame(['i' => 10, 's' => '1', 'a' => []], $result);
+
+        $this->expectException(InvalidParamsException::class); // s = []: array to string
+        $routeDispatcher->dispatch(
+            $route,
+            RequestParams::constructNamed(
+                ['i' => '10', 's' => [], 'a' => null]
+            )
+        );
+    }
+
+    public function testParameterTypeCastsWithDefaults()
+    {
+        $route = $this->getMockBuilder(RouteInterface::class)->getMock();
+        $route->method('getControllerClass')->willReturn(RouteDispatcherTest_StubController::class);
+        $route->method('getActionName')->willReturn('strictTypesWithDefaults');
+        /** @var RouteInterface $route */
+
+        $container = $this->getMockBuilder(Container::class)->getMock();
+        $container->method('make')->with(RouteDispatcherTest_StubController::class)
+            ->willReturn(new RouteDispatcherTest_StubController());
+        /** @var Container $container */
+
+        $routeDispatcher = new RouteDispatcher($container);
+
+        $result = $routeDispatcher->dispatch(
+            $route,
+            RequestParams::constructNamed(['required' => 2])
+        );
+        $this->assertSame(['required' => 2, 'i' => 1, 's' => '1', 'a' => [1]], $result);
+
+        $result = $routeDispatcher->dispatch(
+            $route,
+            RequestParams::constructNamed(['required' => 2, 's' => 2, 'a' => 2])
+        );
+        $this->assertSame(['required' => 2, 'i' => 1, 's' => '2', 'a' => [2]], $result);
+
+        $this->expectException(InvalidParamsException::class); // 'required' is required
+        $routeDispatcher->dispatch(
+            $route,
+            RequestParams::constructNamed(['i' => 2, 's' => 2, 'a' => [2]])
+        );
+    }
+
 }
 
 class RouteDispatcherTest_StubController
@@ -324,6 +396,16 @@ class RouteDispatcherTest_StubController
         $dep1 && $dep2;
 
         return ['required' => $required, 'optional' => $optional];
+    }
+
+    public function strictTypes(int $i, string $s, array $a)
+    {
+        return ['i' => $i, 's' => $s, 'a' => $a];
+    }
+
+    public function strictTypesWithDefaults(int $required, int $i = 1, string $s = '1', array $a = [1])
+    {
+        return ['required' => $required, 'i' => $i, 's' => $s, 'a' => $a];
     }
 
 }
