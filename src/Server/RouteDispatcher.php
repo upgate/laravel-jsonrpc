@@ -97,14 +97,14 @@ final class RouteDispatcher implements RouteDispatcherInterface
                 if (null !== $params) {
                     if ($areParamsNamed) {
                         $name = $parameter->getName();
-                        if (isset($params[$name])) {
-                            $args[] = $params[$name];
+                        if (array_key_exists($name, $params)) {
+                            $args[] = $this->cast($params[$name], $parameter);
                             unset($params[$name]);
                             continue;
                         }
                     } else {
                         if (count($params)) {
-                            $args[] = array_shift($params);
+                            $args[] = $this->cast(array_shift($params), $parameter);
                             continue;
                         }
                     }
@@ -118,6 +118,30 @@ final class RouteDispatcher implements RouteDispatcherInterface
         }
 
         return $method->invokeArgs($controller, $args);
+    }
+
+    private function cast($value, \ReflectionParameter $parameter)
+    {
+        $type = $parameter->getType();
+        if ($type && $type->isBuiltin()) {
+            if ($value === null && $type->allowsNull()) {
+                return null;
+            }
+            $parameterType = (string)$type;
+            $valueType = gettype($type);
+            if ($valueType === $parameterType) {
+                return $value;
+            }
+            try {
+                settype($value, $parameterType);
+            } catch (\Exception $e) {
+                throw new InvalidParamsException(
+                    "\"{$parameter->getName()}\" type mismatch: cannot cast $valueType to $parameterType", 0, $e
+                );
+            }
+        }
+
+        return $value;
     }
 
 }
