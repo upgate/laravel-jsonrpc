@@ -1,5 +1,7 @@
 # JSON-RPC Server for Laravel 5
 
+[![Build Status](https://travis-ci.org/upgate/laravel-jsonrpc.svg?branch=master)](https://travis-ci.org/upgate/laravel-jsonrpc)
+
 ## Quick How-To
 
 - Install with composer
@@ -38,7 +40,7 @@ class RouteServiceProvider extends ServiceProvider
 ```php
 $router->post('/jsonrpc', function (Illuminate\Http\Request $request) use ($jsonRpcServer) {
     $jsonRpcServer->router()
-        ->addMiddleware(['fooMiddleware', 'barMiddleware']) // middleware alias names or class names
+        ->setMiddlewares(['fooMiddleware', 'barMiddleware']) // middleware alias names or class names
         ->bindController('foo', 'FooController') // for 'foo.$method' methods invoke FooController->$method(),
                                                  // for 'foo' method invoke FooConroller->index()
         ->bind('bar', 'MyController@bar') // for 'bar' method invoke MyController->bar()
