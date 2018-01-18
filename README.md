@@ -58,3 +58,8 @@ $router->post('/jsonrpc', function (Illuminate\Http\Request $request) use ($json
 ```
 
 See tests/ServerTest.php and tests/RouterTest.php for more examples.
+
+## Compatibility
+
+The library requires PHP 7.1 since v0.2.0. Unfortunately, PHP version constraint in composer.json was wrong in versions 0.2.0 - 0.2.1.
+If you're using PHP 7.0, require `"upgate/laravel-jsonrpc": "^0.1"` in your composer.json.
