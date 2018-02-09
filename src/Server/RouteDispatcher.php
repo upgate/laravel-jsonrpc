@@ -10,6 +10,7 @@ use Upgate\LaravelJsonRpc\Contract\RouteDispatcherInterface;
 use Upgate\LaravelJsonRpc\Contract\RouteInterface;
 use Upgate\LaravelJsonRpc\Exception\InternalErrorException;
 use Upgate\LaravelJsonRpc\Exception\InvalidParamsException;
+use Upgate\LaravelJsonRpc\Exception\ValidationFailedException;
 
 final class RouteDispatcher implements RouteDispatcherInterface
 {
@@ -18,6 +19,11 @@ final class RouteDispatcher implements RouteDispatcherInterface
      * @var Container
      */
     private $container;
+
+    /**
+     * @var FormRequestFactory
+     */
+    private $formRequestFactory;
 
     /**
      * @var null|string
@@ -31,6 +37,7 @@ final class RouteDispatcher implements RouteDispatcherInterface
     public function __construct(Container $container, string $controllerNamespace = null)
     {
         $this->container = $container;
+        $this->formRequestFactory = new FormRequestFactory($container);
         $this->setControllerNamespace($controllerNamespace);
     }
 
@@ -89,7 +96,11 @@ final class RouteDispatcher implements RouteDispatcherInterface
             $class = $parameter->getClass();
             if ($class) {
                 try {
-                    $args[] = $this->container->make($class->name);
+                    if ($class->isSubclassOf(FormRequest::class)) {
+                        $args[] = $this->makeFormRequest($class->name, $requestParams);
+                    } else {
+                        $args[] = $this->container->make($class->name);
+                    }
                 } catch (ReflectionException $e) {
                     throw new InternalErrorException($e->getMessage(), 0, $e);
                 }
@@ -149,6 +160,23 @@ final class RouteDispatcher implements RouteDispatcherInterface
         }
 
         return $value;
+    }
+
+    /**
+     * @param string $formRequestClass
+     * @param RequestParams|null $requestParams
+     * @return FormRequest
+     */
+    private function makeFormRequest(string $formRequestClass, RequestParams $requestParams = null): FormRequest
+    {
+        $formRequest = $this->formRequestFactory->makeFormRequest($formRequestClass, $requestParams);
+        $validator = $this->formRequestFactory->makeValidator($formRequest);
+
+        if ($validator->fails()) {
+            throw new ValidationFailedException($validator);
+        }
+
+        return $formRequest;
     }
 
 }
