@@ -19,4 +19,8 @@ abstract class JsonRpcException extends \RuntimeException
 
     abstract protected function getDefaultCode(): int;
 
+    public function getExtras(): array {
+        return [];
+    }
+
 }
