@@ -40,6 +40,43 @@ final class RequestParams
     }
 
     /**
+     * Check for existance of a parameter.
+     *
+     * @param int|string $key
+     * @return bool whether parameter $key exists
+     */
+    public function has($key): bool
+    {
+        return array_key_exists($key, $this->params);
+    }
+
+    /**
+     * Get a parameter by name or index.
+     *
+     * @param int|string $key
+     * @param mixed $default
+     * @return mixed
+     */
+    public function get($key, $default = null)
+    {
+        return $this->has($key) ? $this->params[$key] : $default;
+    }
+
+    /**
+     * @param int|string $key
+     * @return mixed
+     * @throws \InvalidArgumentException
+     */
+    public function __get($key)
+    {
+        if (!$this->has($key)) {
+            throw new \InvalidArgumentException("Parameter does not exist: '$key'");
+        }
+
+        return $this->params[$key];
+    }
+
+    /**
      * @return bool
      */
     public function areParamsNamed(): bool
