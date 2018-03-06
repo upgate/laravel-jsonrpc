@@ -4,7 +4,7 @@
 
 ## Quick How-To
 
-- Install with composer
+- Install with composer: `composer require upgate/laravel-jsonrpc`
 - Add 'Upgate\LaravelJsonRpc\ServiceProvider\JsonRpcServerServiceProvider' to the service providers list
 - In your RouteServiceProvider, do something like this:
 
@@ -57,7 +57,76 @@ $router->post('/jsonrpc', function (Illuminate\Http\Request $request) use ($json
 });
 ```
 
-See tests/ServerTest.php and tests/RouterTest.php for more examples.
+See `ServerTest` and `RouterTest` for more examples.
+
+## Exception handling
+
+Descendants of `Upgate\LaravelJsonRpc\Exception\JsonRpcException` represent JSON-RPC errors according to the spec (see `Upgate\LaravelJsonRpc\Server\ErrorCode`).
+
+Other exceptions are logged and converted to INTERNAL_ERROR responses by default.
+
+Use `Upgate\LaravelJsonRpc\Server\Server::onException()` to register custom exception handlers:
+
+```php
+use Upgate\LaravelJsonRpc\Server;
+
+$jsonRpcServer->onException(
+    SomeExceptionClass::class,
+    function (SomeExceptionClass $e, Server\Request $request) {
+        $message = "Some Message";
+        $code = -32099;
+        return Server\RequestResponse::constructErrorResponse($request->getId(), $message, $code);
+    }
+);
+
+$jsonRpcServer->onException(
+    \Exception::class, // catch-all
+    function (\Exception $e, Server\Request $request) {
+        $message = "Some Other Message";
+        $code = -32098;
+        return Server\RequestResponse::constructErrorResponse($request->getId(), $message, $code);
+    }
+);
+```
+
+See `ServerTest:: testSingleRequestWithExceptionHandler()` and `ServerTest::testExceptionHandlersPriority()` for more examples.
+
+## JSON-RPC Request Forms
+
+(since v0.3.0)
+
+`Upgate\LaravelJsonRpc\Server\FormRequest` is similar to Laravel form requests, but validates JSON-RPC parameters instead. 
+
+Example:
+
+```php
+use Upgate\LaravelJsonRpc\Server\FormRequest as JsonRpcFormRequest;
+
+class MyJsonRpcFormRequest extends JsonRpcFormRequest
+{
+    public function rules(): array
+    {
+        return [
+            'id'    => 'required|numeric',
+            'email' => 'required|email',
+        ];
+    }
+}
+
+class MyController
+{
+    public function myAction(MyJsonRpcFormRequest $jsonRpcRequest)
+    {
+        $email = $jsonRpcRequest->email; // or $jsonRpcRequest->get('email');
+        $allParams = $jsonRpcRequest->all();
+        // ...
+    }
+}
+```
+
+If validation fails, the INVALID_PARAMS error response is returned, with validation error details in the (non-standard) `validation_errors` object member.
+
+See the `ServerFormRequestTest` for more examples.
 
 ## Compatibility
 
