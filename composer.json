@@ -24,5 +24,12 @@
         "psr-4": {
             "Upgate\\LaravelJsonRpc\\": "src"
         }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Upgate\\LaravelJsonRpc\\ServiceProvider\\JsonRpcServerServiceProvide"
+            ]
+        }
     }
 }
