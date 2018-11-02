@@ -28,7 +28,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Upgate\\LaravelJsonRpc\\ServiceProvider\\JsonRpcServerServiceProvide"
+                "Upgate\\LaravelJsonRpc\\ServiceProvider\\JsonRpcServerServiceProvider"
             ]
         }
     }
