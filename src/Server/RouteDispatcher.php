@@ -146,7 +146,7 @@ final class RouteDispatcher implements RouteDispatcherInterface
                 return null;
             }
             $parameterType = (string)$type;
-            $valueType = gettype($type);
+            $valueType = gettype($value);
             if ($valueType === $parameterType) {
                 return $value;
             }
