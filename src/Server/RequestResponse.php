@@ -6,6 +6,7 @@ namespace Upgate\LaravelJsonRpc\Server;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Contracts\Support\Jsonable;
 use Upgate\LaravelJsonRpc\Exception\JsonRpcException;
+use Illuminate\Http\JsonResponse;
 
 final class RequestResponse implements Jsonable, Arrayable
 {
@@ -22,7 +23,8 @@ final class RequestResponse implements Jsonable, Arrayable
     public function __construct($id, $result, $isError = false)
     {
         $this->id = $id;
-        $this->result = $result;
+        $this->result = $result instanceof JsonResponse && method_exists($result, 'getData')
+            ? $result->getData() : $result;
         $this->isError = (bool)$isError;
     }
 
