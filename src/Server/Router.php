@@ -60,7 +60,7 @@ final class Router implements RouteRegistryInterface
      * @param callable $routesConfigurator
      * @return RouteRegistryInterface
      */
-    public function group($middlewaresConfigurator = null, callable $routesConfigurator): RouteRegistryInterface
+    public function group($middlewaresConfigurator, callable $routesConfigurator): RouteRegistryInterface
     {
         $middlewaresSubcollection = $this->middlewaresCollection ? clone $this->middlewaresCollection : null;
         if (null !== $middlewaresConfigurator) {

@@ -43,7 +43,7 @@ interface RouteRegistryInterface
      * @param callable $routesConfigurator
      * @return $this
      */
-    public function group($middlewaresConfigurator = null, callable $routesConfigurator): RouteRegistryInterface;
+    public function group($middlewaresConfigurator, callable $routesConfigurator): RouteRegistryInterface;
 
     /**
      * @param string $method
