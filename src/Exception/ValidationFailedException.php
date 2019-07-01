@@ -18,12 +18,12 @@ final class ValidationFailedException extends JsonRpcException
             $code ?: $this->getDefaultCode()
         );
 
-        $this->validationErrors = ['validation_errors' => $validator->errors()->toArray()];
+        $this->validationErrors = $validator->errors()->toArray();
     }
 
     public function getExtras(): array
     {
-        return $this->validationErrors;
+        return ['data' => ['violations' => $this->validationErrors]];
     }
 
     protected function getDefaultMessage(): string
