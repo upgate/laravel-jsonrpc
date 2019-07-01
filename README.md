@@ -124,7 +124,7 @@ class MyController
 }
 ```
 
-If validation fails, the INVALID_PARAMS error response is returned, with validation error details in the (non-standard) `validation_errors` object member.
+If validation fails, the INVALID_PARAMS error response is returned, with validation error details in `data.violations`.
 
 See the `ServerFormRequestTest` for more examples.
 

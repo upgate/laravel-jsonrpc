@@ -51,10 +51,10 @@ class ServerFormRequestTest extends \PHPUnit\Framework\TestCase
         $expectedError = (object)[
             'code'              => Server\ErrorCode::INVALID_PARAMS,
             'message'           => 'Validation failed',
-            'validation_errors' => (object)[
+            'data' => (object)['violations' => (object)[
                 'id'    => ['Required'],
                 'email' => ['Bad Email']
-            ]
+            ]]
         ];
         $expectedResponseData = (object)[
             'jsonrpc' => '2.0',
@@ -101,10 +101,10 @@ class ServerFormRequestTest extends \PHPUnit\Framework\TestCase
         $expectedError = (object)[
             'code'              => Server\ErrorCode::INVALID_PARAMS,
             'message'           => 'Validation failed',
-            'validation_errors' => [
+            'data' => (object)['violations' => [
                 ['Not Numeric'],
                 ['Required'],
-            ]
+            ]]
         ];
         $expectedResponseData = (object)[
             'jsonrpc' => '2.0',
