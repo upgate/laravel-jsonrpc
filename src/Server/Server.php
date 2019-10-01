@@ -143,7 +143,7 @@ class Server implements ServerInterface, RequestExecutorInterface
             $response = $this->requestFactory->createFromPayload($payload)->executeWith($this);
         } catch (JsonRpcException $e) {
             $response = RequestResponse::constructExceptionErrorResponse(null, $e);
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             $response = $this->handleException($e);
         }
 
@@ -176,11 +176,11 @@ class Server implements ServerInterface, RequestExecutorInterface
     }
 
     /**
-     * @param \Exception $e
+     * @param \Throwable $e
      * @param RequestInterface|null $request
      * @return RequestResponse|null
      */
-    private function handleException(\Exception $e, RequestInterface $request = null)
+    private function handleException(\Throwable $e, RequestInterface $request = null)
     {
         $handlerResult = $this->runExceptionHandlers($e, $request);
 
@@ -203,11 +203,11 @@ class Server implements ServerInterface, RequestExecutorInterface
     }
 
     /**
-     * @param \Exception $e
+     * @param \Throwable $e
      * @param RequestInterface $request
      * @return bool|RequestResponse
      */
-    private function runExceptionHandlers(\Exception $e, RequestInterface $request = null)
+    private function runExceptionHandlers(\Throwable $e, RequestInterface $request = null)
     {
         foreach ($this->exceptionHandlers as $className => $handler) {
             if ($e instanceof $className) {
