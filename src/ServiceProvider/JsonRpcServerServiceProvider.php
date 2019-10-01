@@ -17,7 +17,7 @@ class JsonRpcServerServiceProvider extends ServiceProvider
 
     public function register()
     {
-        $this->app->bind(
+        $this->app->singleton(
             JsonRpcServerContract::class,
             function () {
                 return new Server(
