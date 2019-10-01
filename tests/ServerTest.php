@@ -193,6 +193,84 @@ class ServerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedResponseData, json_decode($response->getContent()));
     }
 
+    public function testThrowableFromMiddleware()
+    {
+        $server = $this->assembleServer();
+
+        $server->router()
+            ->addMiddleware(ServerTest_Middleware_ThrowsCatchableFatal::class)
+            ->bindController('foo', 'ServerTest_FooController');
+
+        /** @var \Throwable $throwable */
+        $throwable = null;
+
+        $server->onException(
+            Throwable::class,
+            function (\Throwable $e, Server\Request $request = null) use (&$throwable) {
+                $throwable = $e;
+                return Server\RequestResponse::constructErrorResponse($request ? $request->getId() : null, $e->getMessage(), $e->getCode());
+            }
+        );
+
+        $server->setPayload(
+            json_encode(
+                [
+                    'jsonrpc' => '2.0',
+                    'method'  => 'foo',
+                    'id'      => 1
+                ]
+            )
+        );
+
+        $response = $server->run();
+        $this->assertInstanceOf(\Throwable::class, $throwable);
+
+        $expectedResponseData = (object)[
+            'jsonrpc' => '2.0',
+            'error'   => (object)['message' => $throwable->getMessage(), 'code' => $throwable->getCode()],
+        ];
+        $this->assertEquals($expectedResponseData, json_decode($response->getContent()));
+    }
+
+
+    public function testThrowableFromController()
+    {
+        $server = $this->assembleServer();
+
+        $server->router()
+            ->bindController('foo', 'ServerTest_FooController');
+
+        /** @var \Throwable $throwable */
+        $throwable = null;
+
+        $server->onException(
+            Throwable::class,
+            function (\Throwable $e, Server\Request $request = null) use (&$throwable) {
+                $throwable = $e;
+                return Server\RequestResponse::constructErrorResponse($request ? $request->getId() : null, $e->getMessage(), $e->getCode());
+            }
+        );
+
+        $server->setPayload(
+            json_encode(
+                [
+                    'jsonrpc' => '2.0',
+                    'method'  => 'foo.throwCatchableFatal',
+                    'id'      => 1
+                ]
+            )
+        );
+
+        $response = $server->run();
+        $this->assertInstanceOf(\Throwable::class, $throwable);
+
+        $expectedResponseData = (object)[
+            'jsonrpc' => '2.0',
+            'error'   => (object)['message' => $throwable->getMessage(), 'code' => $throwable->getCode()],
+        ];
+        $this->assertEquals($expectedResponseData, json_decode($response->getContent()));
+    }
+
     public function testExceptionHandlersPriority()
     {
         $server = $this->assembleServer();
@@ -414,6 +492,13 @@ class ServerTest_FooController
         throw new \RuntimeException();
     }
 
+    public function throwCatchableFatal()
+    {
+        $a = null;
+        /** @noinspection PhpUndefinedMethodInspection */
+        $a->noSuchMethod();
+    }
+
 }
 
 class ServerTest_BarController
@@ -484,6 +569,19 @@ class ServerTest_Middleware_DenyByContext
         if (is_object($context) && isset($context->deny)) {
             throw new AccessDeniedHttpException('Access Denied By Context');
         }
+
+        return $next($context);
+    }
+
+}
+
+class ServerTest_Middleware_ThrowsCatchableFatal
+{
+
+    public function handle($context, callable $next)
+    {
+        /** @noinspection PhpUndefinedMethodInspection */
+        $context->noSuchMethod();
 
         return $next($context);
     }
