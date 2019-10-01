@@ -45,6 +45,14 @@ abstract class FormRequest
     }
 
     /**
+     * @return array of custom attributes
+     */
+    public function attributes(): array
+    {
+        return [];
+    }
+
+    /**
      * Get a parameter by name or index.
      *
      * @param int|string $key

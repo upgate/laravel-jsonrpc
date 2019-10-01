@@ -43,6 +43,19 @@ class FormRequestTest extends \PHPUnit\Framework\TestCase
         $this->assertTrue($validator->fails());
     }
 
+    public function testValidationMessages()
+    {
+        $formRequest = $this->factory->makeFormRequest(FormRequestTest_FormRequest::class);
+        $formRequest->setRequestParams(RequestParams::constructNamed([]));
+        /** @var Illuminate\Contracts\Validation\Validator $validator */
+        $validator = $this->factory->makeValidator($formRequest);
+        $expectedMessages = [
+            'id' => ['I need a nice id'],
+            'email' => ['I really need a great email'],
+        ];
+        $this->assertSame($expectedMessages, $validator->getMessageBag()->toArray());
+    }
+
 }
 
 class FormRequestTest_FormRequest extends FormRequest
@@ -54,4 +67,21 @@ class FormRequestTest_FormRequest extends FormRequest
             'email' => 'required|email'
         ];
     }
+
+    public function messages(): array
+    {
+        return [
+            'id.required'    => 'I need :attribute',
+            'email.required' => 'I really need :attribute',
+        ];
+    }
+
+    public function attributes(): array
+    {
+        return [
+            'id'    => 'a nice id',
+            'email' => 'a great email',
+        ];
+    }
+
 }
