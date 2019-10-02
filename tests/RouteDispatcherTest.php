@@ -227,7 +227,7 @@ class RouteDispatcherTest extends \PHPUnit\Framework\TestCase
         $routeDispatcher->dispatch($route, null);
     }
 
-    public function testRouteDispatcherControllerNamespace() {
+    public function testRouteDispatcherControllerNamespaceWithSetter() {
         $route = $this->getMockBuilder(RouteInterface::class)->getMock();
         $route->method('getControllerClass')->willReturn('StubController');
         $route->method('getActionName')->willReturn('returnArg');
@@ -244,7 +244,7 @@ class RouteDispatcherTest extends \PHPUnit\Framework\TestCase
         /** @var Container $container */
 
         eval('
-            namespace RouteDispatcherTestNs {
+            namespace RouteDispatcherControllerNamespaceWithSetter {
                 class StubController {
                     public function returnArg($value) {
                         return $value;
@@ -254,7 +254,41 @@ class RouteDispatcherTest extends \PHPUnit\Framework\TestCase
         ');
 
         $routeDispatcher = new RouteDispatcher($container);
-        $routeDispatcher->setControllerNamespace('RouteDispatcherTestNs');
+        $routeDispatcher->setControllerNamespace('RouteDispatcherControllerNamespaceWithSetter');
+        $result = $routeDispatcher->dispatch($route, RequestParams::constructPositional([100500]));
+        $this->assertEquals(100500, $result);
+    }
+
+    public function testRouteDispatcherControllerNamespaceWithFQControllerClassName() {
+        $route = $this->getMockBuilder(RouteInterface::class)->getMock();
+        /** @noinspection PhpUndefinedClassInspection */
+        /** @noinspection PhpFullyQualifiedNameUsageInspection */
+        /** @noinspection PhpUndefinedNamespaceInspection */
+        $route->method('getControllerClass')->willReturn(\RouteDispatcherControllerNamespaceWithFQControllerClassName\StubController::class);
+        $route->method('getActionName')->willReturn('returnArg');
+        /** @var RouteInterface $route */
+
+        $container = $this->getMockBuilder(Container::class)->getMock();
+        $container->method('make')->will(
+            $this->returnCallback(
+                function ($className) {
+                    return new $className;
+                }
+            )
+        );
+        /** @var Container $container */
+
+        eval('
+            namespace RouteDispatcherControllerNamespaceWithFQControllerClassName {
+                class StubController {
+                    public function returnArg($value) {
+                        return $value;
+                    }
+                }
+            }
+        ');
+
+        $routeDispatcher = new RouteDispatcher($container);
         $result = $routeDispatcher->dispatch($route, RequestParams::constructPositional([100500]));
         $this->assertEquals(100500, $result);
     }
