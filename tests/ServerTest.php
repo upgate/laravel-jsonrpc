@@ -228,6 +228,7 @@ class ServerTest extends \PHPUnit\Framework\TestCase
         $expectedResponseData = (object)[
             'jsonrpc' => '2.0',
             'error'   => (object)['message' => $throwable->getMessage(), 'code' => $throwable->getCode()],
+            'id'      => 1,
         ];
         $this->assertEquals($expectedResponseData, json_decode($response->getContent()));
     }
@@ -267,6 +268,7 @@ class ServerTest extends \PHPUnit\Framework\TestCase
         $expectedResponseData = (object)[
             'jsonrpc' => '2.0',
             'error'   => (object)['message' => $throwable->getMessage(), 'code' => $throwable->getCode()],
+            'id'      => 1,
         ];
         $this->assertEquals($expectedResponseData, json_decode($response->getContent()));
     }
