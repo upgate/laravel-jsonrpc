@@ -1,20 +1,15 @@
 <?php
 declare(strict_types=1);
 
-namespace Upgate\LaravelJsonRpc\ServiceProvider;
+namespace Upgate\LaravelJsonRpc\Server;
 
 use Illuminate\Contracts\Container\Container;
 use Upgate\LaravelJsonRpc\Contract\MiddlewareDispatcherInterface;
 use Upgate\LaravelJsonRpc\Contract\RequestFactoryInterface;
 use Upgate\LaravelJsonRpc\Contract\ServerInterface;
-use Upgate\LaravelJsonRpc\Server\Server;
 use Psr\Log\LoggerInterface;
-use Upgate\LaravelJsonRpc\Server\RouteDispatcher;
-use Upgate\LaravelJsonRpc\Server\MiddlewarePipelineDispatcher;
-use Upgate\LaravelJsonRpc\Server\RequestFactory;
-use Upgate\LaravelJsonRpc\Server\Router;
 
-final class JsonRpcServerFactory
+final class ServerFactory
 {
 
     /**

@@ -5,7 +5,7 @@ use Illuminate\Contracts\Foundation\Application;
 use Psr\Log\LoggerInterface;
 use Upgate\LaravelJsonRpc\Contract\ServerInterface as JsonRpcServerContract;
 use Upgate\LaravelJsonRpc\Server\Server;
-use Upgate\LaravelJsonRpc\ServiceProvider\JsonRpcServerFactory;
+use Upgate\LaravelJsonRpc\Server\ServerFactory;
 use Upgate\LaravelJsonRpc\ServiceProvider\JsonRpcServerServiceProvider;
 
 class ServiceProviderTest extends \PHPUnit\Framework\TestCase
@@ -30,10 +30,10 @@ class ServiceProviderTest extends \PHPUnit\Framework\TestCase
         $serviceProvider = new JsonRpcServerServiceProvider($this->app);
         $serviceProvider->register();
 
-        $factory1 = $this->app->make(JsonRpcServerFactory::class);
-        $this->assertInstanceOf(JsonRpcServerFactory::class, $factory1);
-        $factory2 = $this->app->make(JsonRpcServerFactory::class);
-        $this->assertInstanceOf(JsonRpcServerFactory::class, $factory2);
+        $factory1 = $this->app->make(ServerFactory::class);
+        $this->assertInstanceOf(ServerFactory::class, $factory1);
+        $factory2 = $this->app->make(ServerFactory::class);
+        $this->assertInstanceOf(ServerFactory::class, $factory2);
         $this->assertSame($factory2, $factory1);
     }
 
@@ -43,7 +43,7 @@ class ServiceProviderTest extends \PHPUnit\Framework\TestCase
         $serviceProvider->register();
 
         $server1 = $this->app->make(JsonRpcServerContract::class);
-        $factory = $this->app->make(JsonRpcServerFactory::class);
+        $factory = $this->app->make(ServerFactory::class);
         $server2 = $factory->make();
         $this->assertNotSame($server2, $server1);
     }

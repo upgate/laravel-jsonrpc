@@ -5,6 +5,7 @@ namespace Upgate\LaravelJsonRpc\ServiceProvider;
 
 use Illuminate\Support\ServiceProvider;
 use Upgate\LaravelJsonRpc\Contract\ServerInterface as JsonRpcServerContract;
+use Upgate\LaravelJsonRpc\Server\ServerFactory;
 
 class JsonRpcServerServiceProvider extends ServiceProvider
 {
@@ -12,16 +13,16 @@ class JsonRpcServerServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->singleton(
-            JsonRpcServerFactory::class,
+            ServerFactory::class,
             function () {
-                return new JsonRpcServerFactory($this->app);
+                return new ServerFactory($this->app);
             }
         );
 
         $this->app->singleton(
             JsonRpcServerContract::class,
             function () {
-                return $this->app->make(JsonRpcServerFactory::class)->make();
+                return $this->app->make(ServerFactory::class)->make();
             }
         );
     }
