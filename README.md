@@ -5,7 +5,6 @@
 ## Quick How-To
 
 - Install with composer: `composer require upgate/laravel-jsonrpc`
-- Add 'Upgate\LaravelJsonRpc\ServiceProvider\JsonRpcServerServiceProvider' to the service providers list
 - In your RouteServiceProvider, do something like this:
 
 
