@@ -23,4 +23,9 @@ interface RequestInterface
      */
     public function getId();
 
+    /**
+     * @return bool
+     */
+    public function hasId(): bool;
+
 }

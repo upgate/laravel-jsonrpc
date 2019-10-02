@@ -60,6 +60,14 @@ class Request implements RequestContract, ExecutableInterface
     }
 
     /**
+     * @return bool
+     */
+    public function hasId(): bool
+    {
+        return $this->id !== null;
+    }
+
+    /**
      * @return null|string|int
      */
     public function getId()

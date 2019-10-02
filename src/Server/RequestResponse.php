@@ -22,7 +22,7 @@ final class RequestResponse implements Jsonable, Arrayable
      */
     public function __construct($id, $result, $isError = false)
     {
-        $this->id = $id;
+        $this->id = null === $id ? null : (is_numeric($id) ? $id : (string)$id);
         $this->result = $result instanceof JsonResponse && method_exists($result, 'getData')
             ? $result->getData() : $result;
         $this->isError = (bool)$isError;
@@ -86,7 +86,7 @@ final class RequestResponse implements Jsonable, Arrayable
     public function toArray()
     {
         $result = ['jsonrpc' => '2.0'];
-        if ($this->id) {
+        if ($this->id !== null) {
             $result['id'] = $this->id;
         }
         if ($this->isError) {

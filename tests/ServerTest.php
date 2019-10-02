@@ -477,6 +477,182 @@ class ServerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedResponseData, json_decode($response->getContent()));
     }
 
+    public function testRequestWithZeroId()
+    {
+        $server = $this->assembleServer();
+
+        $server->router()->bindController('foo', 'ServerTest_FooController');
+
+        $server->setPayload(
+            json_encode(
+                [
+                    'jsonrpc' => '2.0',
+                    'method'  => 'foo',
+                    'id'      => 0
+                ]
+            )
+        );
+
+        $response = $server->run();
+
+        $expectedResponseData = (object)[
+            'jsonrpc' => '2.0',
+            'result'  => (object)['foo_index' => true],
+            'id'      => 0
+        ];
+        $this->assertEquals($expectedResponseData, json_decode($response->getContent()));
+    }
+
+    public function testFailedRequestWithZeroId()
+    {
+        $server = $this->assembleServer();
+
+        $server->router()->bindController('foo', 'ServerTest_FooController');
+
+        $server->setPayload(
+            json_encode(
+                [
+                    'jsonrpc' => '2.0',
+                    'method'  => 'foo.throwException',
+                    'id'      => 0
+                ]
+            )
+        );
+
+        $response = $server->run();
+
+        $expectedResponseData = (object)[
+            'jsonrpc' => '2.0',
+            'error'   => (object)['message' => 'Internal error', 'code' => -32603],
+            'id'      => 0
+        ];
+        $this->assertEquals($expectedResponseData, json_decode($response->getContent()));
+    }
+
+    public function testFailedMiddlewareWithZeroId()
+    {
+        $server = $this->assembleServer();
+
+        $server->router()
+            ->addMiddleware(ServerTest_Middleware_Deny::class)
+            ->bindController('foo', 'ServerTest_FooController');
+
+        $server->setPayload(
+            json_encode(
+                [
+                    'jsonrpc' => '2.0',
+                    'method'  => 'foo',
+                    'id'      => 0
+                ]
+            )
+        );
+
+        $response = $server->run();
+
+        $expectedResponseData = (object)[
+            'jsonrpc' => '2.0',
+            'error'   => (object)['message' => 'Internal error', 'code' => -32603],
+            'id'      => 0
+        ];
+        $this->assertEquals($expectedResponseData, json_decode($response->getContent()));
+    }
+
+    public function testBatchRequestWithZeroId()
+    {
+        $server = $this->assembleServer();
+
+        $server->router()
+            ->bindController('foo', ServerTest_FooController::class);
+
+        $server->setPayload(
+            json_encode(
+                [
+                    [
+                        'jsonrpc' => '2.0',
+                        'method'  => 'foo',
+                        'id'      => 0
+                    ]
+                ]
+            )
+        );
+
+        $context = new stdClass();
+        $context->deny = true;
+
+        $response = $server->run($context);
+
+        $expectedResponseData = [
+            (object)[
+                'jsonrpc' => '2.0',
+                'result'  => (object)['foo_index' => true],
+                'id'      => 0
+            ],
+        ];
+        $this->assertEquals($expectedResponseData, json_decode($response->getContent()));
+    }
+
+    public function testBatchRequestWithFailedZeroIdRequest()
+    {
+        $server = $this->assembleServer();
+
+        $server->router()
+            ->bindController('foo', ServerTest_FooController::class);
+
+        $server->setPayload(
+            json_encode(
+                [
+                    [
+                        'jsonrpc' => '2.0',
+                        'method'  => 'foo.throwException',
+                        'id'      => 0
+                    ]
+                ]
+            )
+        );
+
+        $response = $server->run();
+
+        $expectedResponseData = [
+            (object)[
+                'jsonrpc' => '2.0',
+                'error'   => (object)['message' => 'Internal error', 'code' => -32603],
+                'id'      => 0
+            ],
+        ];
+        $this->assertEquals($expectedResponseData, json_decode($response->getContent()));
+    }
+
+    public function testBatchRequestWithFailedZeroIdMiddleware()
+    {
+        $server = $this->assembleServer();
+
+        $server->router()
+            ->addMiddleware(ServerTest_Middleware_Deny::class)
+            ->bindController('foo', ServerTest_FooController::class);
+
+        $server->setPayload(
+            json_encode(
+                [
+                    [
+                        'jsonrpc' => '2.0',
+                        'method'  => 'foo',
+                        'id'      => 0
+                    ]
+                ]
+            )
+        );
+
+        $response = $server->run();
+
+        $expectedResponseData = [
+            (object)[
+                'jsonrpc' => '2.0',
+                'error'   => (object)['message' => 'Internal error', 'code' => -32603],
+                'id'      => 0
+            ],
+        ];
+        $this->assertEquals($expectedResponseData, json_decode($response->getContent()));
+    }
     private function assembleServer()
     {
         return new Server\Server(
