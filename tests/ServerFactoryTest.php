@@ -4,7 +4,7 @@ declare(strict_types=1);
 use Illuminate\Contracts\Container\Container;
 use Psr\Log\LoggerInterface;
 use Upgate\LaravelJsonRpc\Server;
-use Upgate\LaravelJsonRpc\ServiceProvider\JsonRpcServerFactory;
+use Upgate\LaravelJsonRpc\Server\ServerFactory;
 
 class ServerFactoryTest extends \PHPUnit\Framework\TestCase
 {
@@ -17,7 +17,7 @@ class ServerFactoryTest extends \PHPUnit\Framework\TestCase
         $container->method('make')->with(LoggerInterface::class)->willReturn($logger);
         /** @var Container $container */
 
-        $factory = new JsonRpcServerFactory($container);
+        $factory = new ServerFactory($container);
         $server1 = $factory->make();
         $this->assertInstanceOf(Server\Server::class, $server1);
         $server2 = $factory->make();
