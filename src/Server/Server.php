@@ -170,7 +170,7 @@ class Server implements ServerInterface, RequestExecutorInterface
             return $request->getId() ? new RequestResponse($request->getId(), $result) : null;
         } catch (JsonRpcException $e) {
             return $request->getId() ? RequestResponse::constructExceptionErrorResponse($request->getId(), $e) : null;
-        } catch (\Exception $e) {
+        } catch (\Throwable $e) {
             return $this->handleException($e, $request);
         }
     }
