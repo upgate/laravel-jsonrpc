@@ -72,19 +72,19 @@ use Upgate\LaravelJsonRpc\Server;
 
 $jsonRpcServer->onException(
     SomeExceptionClass::class,
-    function (SomeExceptionClass $e, Server\Request $request) {
+    function (SomeExceptionClass $e, Server\Request $request = null) {
         $message = "Some Message";
         $code = -32099;
-        return Server\RequestResponse::constructErrorResponse($request->getId(), $message, $code);
+        return Server\RequestResponse::constructErrorResponse($request ? $request->getId() : null, $message, $code);
     }
 );
 
 $jsonRpcServer->onException(
-    \Exception::class, // catch-all
-    function (\Exception $e, Server\Request $request) {
+    \Throwable::class, // catch-all
+    function (\Throwable $e, Server\Request $request = null) {
         $message = "Some Other Message";
         $code = -32098;
-        return Server\RequestResponse::constructErrorResponse($request->getId(), $message, $code);
+        return Server\RequestResponse::constructErrorResponse($request ? $request->getId() : null, $message, $code);
     }
 );
 ```
