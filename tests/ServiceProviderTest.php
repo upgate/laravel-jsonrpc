@@ -11,6 +11,9 @@ use Upgate\LaravelJsonRpc\ServiceProvider\JsonRpcServerServiceProvider;
 class ServiceProviderTest extends \PHPUnit\Framework\TestCase
 {
 
+    /**
+     * @var Application
+     */
     private $app;
 
     public function testServiceProviderProvidesServerAsSingleton()
@@ -50,23 +53,11 @@ class ServiceProviderTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp()
     {
-        $this->app = new class extends Illuminate\Container\Container implements Application {
-            public function version() {}
-            public function basePath() {}
-            public function environment() {}
-            public function runningInConsole() {}
-            public function runningUnitTests() {}
-            public function isDownForMaintenance() {}
-            public function registerConfiguredProviders() {}
-            public function register($provider, $options = [], $force = false) {}
-            public function registerDeferredProvider($provider, $service = null) {}
-            public function boot() {}
-            public function booting($callback) {}
-            public function booted($callback) {}
-            public function getCachedServicesPath() {}
-            public function getCachedPackagesPath() {}
-        };
-
+        $container = new Illuminate\Container\Container();
+        $this->app = $this->getMockBuilder(Application::class)
+            ->enableProxyingToOriginalMethods()
+            ->setProxyTarget($container)
+            ->getMock();
         $this->app->instance(LoggerInterface::class, $this->getMockBuilder(LoggerInterface::class)->getMock());
     }
 
