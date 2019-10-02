@@ -384,11 +384,11 @@ class ServerTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedResponseData, json_decode($response->getContent()));
     }
 
-    public function testControllerNamespace()
+    public function testSetControllerNamespace()
     {
         eval(
         '
-            namespace ServerTestNs {
+            namespace ServerTestSetControllerNamespace {
                 class ServerTest_FooController {
                     public function index() {
                         return ["ns_foo_index" => true];
@@ -400,9 +400,50 @@ class ServerTest extends \PHPUnit\Framework\TestCase
 
         $server = $this->assembleServer();
 
-        $server->setControllerNamespace('ServerTestNs');
+        $server->setControllerNamespace('ServerTestSetControllerNamespace');
 
         $server->router()->bindController('foo', 'ServerTest_FooController');
+
+        $server->setPayload(
+            json_encode(
+                [
+                    'jsonrpc' => '2.0',
+                    'method'  => 'foo',
+                    'id'      => 1
+                ]
+            )
+        );
+
+        $response = $server->run();
+
+        $expectedResponseData = (object)[
+            'jsonrpc' => '2.0',
+            'result'  => (object)['ns_foo_index' => true],
+            'id'      => 1
+        ];
+        $this->assertEquals($expectedResponseData, json_decode($response->getContent()));
+    }
+
+    public function testFQControllerClassName()
+    {
+        eval(
+        '
+            namespace ServerTestFQControllerClassName {
+                class ServerTest_FooController {
+                    public function index() {
+                        return ["ns_foo_index" => true];
+                    }
+                }
+            }
+        '
+        );
+
+        $server = $this->assembleServer();
+
+        /** @noinspection PhpUndefinedClassInspection */
+        /** @noinspection PhpFullyQualifiedNameUsageInspection */
+        /** @noinspection PhpUndefinedNamespaceInspection */
+        $server->router()->bindController('foo', \ServerTestFQControllerClassName\ServerTest_FooController::class);
 
         $server->setPayload(
             json_encode(
