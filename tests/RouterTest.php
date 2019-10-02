@@ -82,6 +82,26 @@ class RouterTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals('bar', $barRoute->getActionName());
     }
 
+    public function testGroupMergeBindingConflictPriority()
+    {
+        $router = new Router();
+        $router->bind('foo', 'BarController@bar');
+        $router->bindController('bar', 'FooController');
+        $router->group(
+            null,
+            function (Router $router) {
+                $router->bind('foo', 'FooController@foo');
+                $router->bindController('bar', 'BarController');
+            }
+        );
+        $fooRoute = $router->resolve('foo');
+        $barRoute = $router->resolve('bar.bar');
+        $this->assertEquals('FooController', $fooRoute->getControllerClass());
+        $this->assertEquals('foo', $fooRoute->getActionName());
+        $this->assertEquals('BarController', $barRoute->getControllerClass());
+        $this->assertEquals('bar', $barRoute->getActionName());
+    }
+
     public function testMiddlewaresConfiguration()
     {
         $middlewares = new MiddlewaresCollection(['mid1', 'mid2']);
