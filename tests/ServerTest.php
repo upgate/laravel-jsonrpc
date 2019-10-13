@@ -653,6 +653,55 @@ class ServerTest extends \PHPUnit\Framework\TestCase
         ];
         $this->assertEquals($expectedResponseData, json_decode($response->getContent()));
     }
+
+    public function testRunWithPayload()
+    {
+        $server = $this->assembleServer();
+
+        $server->router()->bindController('foo', 'ServerTest_FooController');
+
+        $payload = json_encode(
+            [
+                'jsonrpc' => '2.0',
+                'method'  => 'foo',
+                'id'      => 1
+            ]
+        );
+
+        $response = $server->runWithPayload($payload);
+
+        $expectedResponseData = (object)[
+            'jsonrpc' => '2.0',
+            'result'  => (object)['foo_index' => true],
+            'id'      => 1
+        ];
+        $this->assertEquals($expectedResponseData, json_decode($response->getContent()));
+    }
+
+    public function testRunWithPayloadArgument()
+    {
+        $server = $this->assembleServer();
+
+        $server->router()->bindController('foo', 'ServerTest_FooController');
+
+        $payload = json_encode(
+            [
+                'jsonrpc' => '2.0',
+                'method'  => 'foo',
+                'id'      => 1
+            ]
+        );
+
+        $response = $server->run(null, $payload);
+
+        $expectedResponseData = (object)[
+            'jsonrpc' => '2.0',
+            'result'  => (object)['foo_index' => true],
+            'id'      => 1
+        ];
+        $this->assertEquals($expectedResponseData, json_decode($response->getContent()));
+    }
+
     private function assembleServer()
     {
         return new Server\Server(

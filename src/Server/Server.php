@@ -127,16 +127,15 @@ class Server implements ServerInterface, RequestExecutorInterface
 
     /**
      * @param mixed $middlewareContext
+     * @param string|null $payload
      * @return JsonResponse
      */
-    public function run($middlewareContext = null): JsonResponse
+    public function run($middlewareContext = null, string $payload = null): JsonResponse
     {
         $this->middlewareContext = $middlewareContext;
 
-        if (null === $this->payload) {
-            $payload = file_get_contents('php://input');
-        } else {
-            $payload = $this->payload;
+        if (null === $payload) {
+            $payload = $this->payload !== null ? $this->payload : file_get_contents('php://input');
         }
 
         try {
@@ -148,6 +147,16 @@ class Server implements ServerInterface, RequestExecutorInterface
         }
 
         return new JsonResponse($response);
+    }
+
+    /**
+     * @param string $payload
+     * @param mixed $middlewareContext
+     * @return JsonResponse
+     */
+    public function runWithPayload(string $payload, $middlewareContext = null): JsonResponse
+    {
+        return $this->run($middlewareContext, $payload);
     }
 
     /**

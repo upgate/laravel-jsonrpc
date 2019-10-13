@@ -41,8 +41,16 @@ interface ServerInterface
 
     /**
      * @param mixed $middlewareContext
+     * @param string|null $payload
      * @return JsonResponse
      */
-    public function run($middlewareContext = null): JsonResponse;
+    public function run($middlewareContext = null, string $payload = null): JsonResponse;
+
+    /**
+     * @param string $payload
+     * @param mixed $middlewareContext
+     * @return JsonResponse
+     */
+    public function runWithPayload(string $payload, $middlewareContext = null): JsonResponse;
 
 }
