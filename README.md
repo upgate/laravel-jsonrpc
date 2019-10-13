@@ -1,4 +1,4 @@
-# JSON-RPC Server for Laravel 5
+# JSON-RPC Server for Laravel/Lumen
 
 [![Build Status](https://travis-ci.org/upgate/laravel-jsonrpc.svg?branch=master)](https://travis-ci.org/upgate/laravel-jsonrpc)
 
