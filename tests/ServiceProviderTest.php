@@ -51,7 +51,7 @@ class ServiceProviderTest extends \PHPUnit\Framework\TestCase
         $this->assertNotSame($server2, $server1);
     }
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $container = new Illuminate\Container\Container();
         $this->app = $this->getMockBuilder(Application::class)

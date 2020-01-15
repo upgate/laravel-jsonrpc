@@ -13,7 +13,7 @@ class FormRequestTest extends \PHPUnit\Framework\TestCase
      */
     private $factory;
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $container = new Illuminate\Container\Container();
         $container->bind(

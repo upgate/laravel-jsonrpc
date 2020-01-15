@@ -16,7 +16,7 @@
         "ext-json": "*"
     },
     "require-dev": {
-        "phpunit/phpunit": "~6.0",
+        "phpunit/phpunit": "~8.2",
         "illuminate/validation": "^5.1 || ^6",
         "illuminate/translation": "^5.1 || ^6",
         "illuminate/container": "^5.1 || ^6"
