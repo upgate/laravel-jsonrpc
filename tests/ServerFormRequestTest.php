@@ -114,7 +114,7 @@ class ServerFormRequestTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedResponseData, json_decode($response->getContent()));
     }
 
-    protected function setUp()
+    protected function setUp(): void
     {
         $container = new Illuminate\Container\Container();
         $container->bind(
