@@ -1,6 +1,7 @@
 <?php
 declare(strict_types=1);
 
+use Illuminate\Container\Container;
 use Illuminate\Contracts\Foundation\Application;
 use Psr\Log\LoggerInterface;
 use Upgate\LaravelJsonRpc\Contract\ServerInterface as JsonRpcServerContract;
@@ -53,12 +54,24 @@ class ServiceProviderTest extends \PHPUnit\Framework\TestCase
 
     protected function setUp(): void
     {
-        $container = new Illuminate\Container\Container();
-        $this->app = $this->getMockBuilder(Application::class)
+        $container = new Container();
+        $appMethods = array_map(function (ReflectionMethod $reflectionMethod) {
+            return $reflectionMethod->getName();
+        }, array_filter(
+            (new ReflectionClass(Application::class))->getMethods(),
+            function (ReflectionMethod $method) {
+                return $method->isPublic() || $method->isAbstract();
+            }
+        ));
+        $this->app = $this->getMockBuilder(Application::class);
+        $this->app = $this->app
+            ->onlyMethods($appMethods)
             ->enableProxyingToOriginalMethods()
             ->setProxyTarget($container)
             ->getMock();
-        $this->app->instance(LoggerInterface::class, $this->getMockBuilder(LoggerInterface::class)->getMock());
+        $container->instance(LoggerInterface::class, $this->getMockBuilder(LoggerInterface::class)->getMock());
+        $container->singleton(JsonRpcServerContract::class, JsonRpcServerContract::class);
+        $container->singleton(ServerFactory::class, ServerFactory::class);
     }
 
 }
