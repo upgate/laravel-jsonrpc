@@ -6,6 +6,7 @@ namespace Upgate\LaravelJsonRpc\Server;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Validation\Factory as ValidationFactory;
+use Upgate\LaravelJsonRpc\Utility\DeepClone;
 
 final class FormRequestFactory
 {
@@ -54,8 +55,11 @@ final class FormRequestFactory
             $this->validationFactory = $this->container->make(ValidationFactory::class);
         }
 
+        // Workaround for Illuminate\Validation issue: inner objects get nullified after validation
+        $data = DeepClone::deepClone($formRequest->all());
+
         return $this->validationFactory->make(
-            $formRequest->all(),
+            $data,
             $this->container->call([$formRequest, 'rules']),
             $formRequest->messages(),
             $formRequest->attributes()
