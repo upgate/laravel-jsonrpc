@@ -56,6 +56,50 @@ class FormRequestTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($expectedMessages, $validator->getMessageBag()->toArray());
     }
 
+    public function testNestedObjectsInParametersDoNotGetNullifiedByLaravelValidator()
+    {
+        $formRequest = $this->factory->makeFormRequest(FormRequestNestedObjectsTest_FormRequest::class);
+        $requestParams = [
+            'simpleParam1' => 'string',
+            'simpleParam2' => 1,
+            'complexParamArray' => [
+                (object)[
+                    'a' => 1,
+                    'b' => 'first',
+                ],
+                (object)[
+                    'a' => 2,
+                    'b' => 'second',
+                    'c' => (object)[
+                        'inner' => 'inner'
+                    ]
+                ],
+            ],
+        ];
+        $formRequest->setRequestParams(RequestParams::constructNamed($requestParams));
+        $validator = $this->factory->makeValidator($formRequest);
+        $this->assertFalse($validator->fails());
+        $nestedObjectsArray = $formRequest->get('complexParamArray');
+        $this->assertCount(2, $nestedObjectsArray);
+        $this->assertEquals(
+            (object)[
+                'a' => 1,
+                'b' => 'first',
+            ],
+            $nestedObjectsArray[0]
+        );
+        $this->assertEquals(
+            (object)[
+                'a' => 2,
+                'b' => 'second',
+                'c' => (object)[
+                    'inner' => 'inner'
+                ]
+            ],
+            $nestedObjectsArray[1]
+        );
+    }
+
 }
 
 class FormRequestTest_FormRequest extends FormRequest
@@ -81,6 +125,22 @@ class FormRequestTest_FormRequest extends FormRequest
         return [
             'id'    => 'a nice id',
             'email' => 'a great email',
+        ];
+    }
+
+}
+class FormRequestNestedObjectsTest_FormRequest extends FormRequest
+{
+
+    public function rules(): array
+    {
+        return [
+            'simpleParam1' => 'string',
+            'simpleParam2' => 'integer',
+            'complexParamArray' => 'sometimes|array',
+            'complexParamArray.*.a' => 'integer',
+            'complexParamArray.*.b' => 'string',
+            'complexParamArray.*.c.inner' => 'sometimes|string',
         ];
     }
 
