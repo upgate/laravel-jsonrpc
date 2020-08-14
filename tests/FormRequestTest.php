@@ -56,6 +56,54 @@ class FormRequestTest extends \PHPUnit\Framework\TestCase
         $this->assertSame($expectedMessages, $validator->getMessageBag()->toArray());
     }
 
+    public function testAccessMethodsNamed()
+    {
+        $formRequest = $this->factory->makeFormRequest(FormRequestTest_FormRequest::class);
+        $formRequest->setRequestParams(RequestParams::constructNamed(['id' => 1, 'email' => 'test@example.com']));
+
+        $this->assertSame(1, $formRequest->get('id'));
+        $this->assertSame(1, $formRequest->id);
+        $this->assertSame(1, $formRequest['id']);
+        $this->assertSame('test@example.com', $formRequest->get('email'));
+        $this->assertSame('test@example.com', $formRequest->email);
+        $this->assertSame('test@example.com', $formRequest['email']);
+        $this->assertFalse($formRequest->has('undefined'));
+        $this->assertFalse(isset($formRequest->undefined));
+        $this->assertFalse(isset($formRequest['undefined']));
+    }
+
+    public function testAccessMethodsPositional()
+    {
+        $formRequest = $this->factory->makeFormRequest(FormRequestTest_FormRequest::class);
+        $formRequest->setRequestParams(RequestParams::constructPositional([1, 'test@example.com']));
+
+        $this->assertSame(1, $formRequest->get(0));
+        $this->assertSame(1, $formRequest->{0});
+        $this->assertSame(1, $formRequest[0]);
+        $this->assertSame('test@example.com', $formRequest->get(1));
+        $this->assertSame('test@example.com', $formRequest->{1});
+        $this->assertSame('test@example.com', $formRequest[1]);
+        $this->assertFalse($formRequest->has(2));
+        $this->assertFalse(isset($formRequest->{2}));
+        $this->assertFalse(isset($formRequest[2]));
+    }
+
+    public function testArrayAccessSetThrows()
+    {
+        $this->expectException(\RuntimeException::class);
+        $formRequest = $this->factory->makeFormRequest(FormRequestTest_FormRequest::class);
+        $formRequest->setRequestParams(RequestParams::constructNamed(['id' => 1, 'email' => 'test@example.com']));
+        $formRequest['foo'] = 'bar';
+    }
+
+    public function testArrayAccessUnsetThrows()
+    {
+        $this->expectException(\RuntimeException::class);
+        $formRequest = $this->factory->makeFormRequest(FormRequestTest_FormRequest::class);
+        $formRequest->setRequestParams(RequestParams::constructNamed(['id' => 1, 'email' => 'test@example.com']));
+        unset($formRequest['foo']);
+    }
+
     public function testNestedObjectsInParametersDoNotGetNullifiedByLaravelValidator()
     {
         $formRequest = $this->factory->makeFormRequest(FormRequestNestedObjectsTest_FormRequest::class);
