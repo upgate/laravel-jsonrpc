@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Upgate\LaravelJsonRpc\Server;
 
-abstract class FormRequest
+abstract class FormRequest implements \ArrayAccess
 {
     /**
      * @var RequestParams|null
@@ -64,6 +64,11 @@ abstract class FormRequest
         return $this->params ? $this->params->get($key, $default) : $default;
     }
 
+    public function has($key): bool
+    {
+        return $this->params ? $this->params->has($key) : false;
+    }
+
     /**
      * @param int|string $key
      * @return mixed
@@ -76,6 +81,31 @@ abstract class FormRequest
         }
 
         return $this->params->$key;
+    }
+
+    public function __isset($key)
+    {
+        return $this->has($key);
+    }
+
+    public function offsetExists($offset)
+    {
+        return $this->has($offset);
+    }
+
+    public function offsetGet($offset)
+    {
+        return $this->get($offset);
+    }
+
+    public function offsetSet($offset, $value)
+    {
+        throw new \RuntimeException(get_called_class() . " is read-only");
+    }
+
+    public function offsetUnset($offset)
+    {
+        throw new \RuntimeException(get_called_class() . " is read-only");
     }
 
 }
