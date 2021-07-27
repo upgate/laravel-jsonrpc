@@ -39,7 +39,9 @@ class RouteServiceProvider extends ServiceProvider
 ```php
 $router->post('/jsonrpc', function (Illuminate\Http\Request $request) use ($jsonRpcServer) {
     $jsonRpcServer->router()
-        ->addMiddlewares(['fooMiddleware', 'barMiddleware']) // middleware alias names or class names
+        ->addMiddlewares(['fooMiddleware', 'barMiddleware', 'auth:rpcGuard']) // Middleware alias names or class names.
+                                                                              // Parameters may be specified by separating
+                                                                              // the middleware name and parameters with a :
         ->bindController('foo', 'FooController') // for 'foo.$method' methods invoke FooController->$method(),
                                                  // for 'foo' method invoke FooConroller->index()
         ->bind('bar', 'MyController@bar') // for 'bar' method invoke MyController->bar()

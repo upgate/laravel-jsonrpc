@@ -44,11 +44,13 @@ class MiddlewareAliasRegistry implements MiddlewareAliasRegistryInterface
      */
     public function findNameByAlias(string $alias): string
     {
-        if (!$this->aliasExists($alias)) {
+        [$aliasName, $aliasParams] = $this->parseAlias($alias);
+
+        if (!$this->aliasExists($aliasName)) {
             throw new \InvalidArgumentException("Middleware alias '$alias' has not been registered");
         }
 
-        return $this->registry[$alias];
+        return $this->registry[$aliasName] . (is_null($aliasParams)? '' : ":{$aliasParams}");
     }
 
     /**
@@ -67,7 +69,15 @@ class MiddlewareAliasRegistry implements MiddlewareAliasRegistryInterface
 
     private function aliasExists(string $alias): bool
     {
-        return isset($this->registry[$alias]);
+        [$aliasName,] = $this->parseAlias($alias);
+
+        return isset($this->registry[$aliasName]);
     }
 
+    private function parseAlias(string $alias): array
+    {
+        $parts = mb_split(':', $alias, 2);
+
+        return [$parts[0], $parts[1] ?? null];
+    }
 }
