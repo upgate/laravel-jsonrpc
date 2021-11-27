@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace Upgate\LaravelJsonRpc\Server;
 
 use Illuminate\Contracts\Container\Container;
+use ReflectionClass;
 use ReflectionException;
 use ReflectionMethod;
 use Upgate\LaravelJsonRpc\Contract\RouteDispatcherInterface;
@@ -93,7 +94,9 @@ final class RouteDispatcher implements RouteDispatcherInterface
 
         $args = [];
         foreach ($method->getParameters() as $parameter) {
-            $class = $parameter->getClass();
+            $class = $parameter->getType() && !$parameter->getType()->isBuiltin()
+                ? new ReflectionClass($parameter->getType()->getName())
+                : null;
             if ($class) {
                 try {
                     if ($class->isSubclassOf(FormRequest::class)) {
