@@ -13,8 +13,7 @@
         "illuminate/http": "^5.1 || ^6 || ^7 || ^8",
         "illuminate/pipeline": "^5.1 || ^6 || ^7 || ^8",
         "psr/log": "^1.0",
-        "ext-json": "*",
-        "ext-mbstring": "*"
+        "ext-json": "*"
     },
     "require-dev": {
         "phpunit/phpunit": "~8.2",

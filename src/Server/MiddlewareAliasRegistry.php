@@ -50,7 +50,7 @@ class MiddlewareAliasRegistry implements MiddlewareAliasRegistryInterface
             throw new \InvalidArgumentException("Middleware alias '$alias' has not been registered");
         }
 
-        return $this->registry[$aliasName] . (is_null($aliasParams)? '' : ":{$aliasParams}");
+        return $this->registry[$aliasName] . ($aliasParams === null ? '' : ":{$aliasParams}");
     }
 
     /**
@@ -76,7 +76,7 @@ class MiddlewareAliasRegistry implements MiddlewareAliasRegistryInterface
 
     private function parseAlias(string $alias): array
     {
-        $parts = mb_split(':', $alias, 2);
+        $parts = explode(":", $alias, 2);
 
         return [$parts[0], $parts[1] ?? null];
     }
