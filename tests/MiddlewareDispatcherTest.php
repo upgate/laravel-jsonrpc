@@ -2,8 +2,10 @@
 declare(strict_types=1);
 
 use Illuminate\Contracts\Container\Container;
+use Upgate\LaravelJsonRpc\Server\MiddlewareAliasRegistry;
 use Upgate\LaravelJsonRpc\Server\MiddlewarePipelineDispatcher;
 use Upgate\LaravelJsonRpc\Contract\MiddlewaresConfigurationInterface;
+use Upgate\LaravelJsonRpc\Server\MiddlewaresCollection;
 
 class MiddlewareDispatcherTest extends \PHPUnit\Framework\TestCase
 {
@@ -28,24 +30,27 @@ class MiddlewareDispatcherTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals(42, $result);
     }
 
-    public function testMiddlewaresChain()
+    public function testMiddlewaresChain(): void
     {
         $container = $this->getMockBuilder(Container::class)->getMock();
-        $container->method('make')->will(
-            $this->returnCallback(
-                function ($className) {
-                    return new $className;
-                }
-            )
+        $container->method('make')->willReturnCallback(
+            function ($className) {
+                return new $className;
+            }
         );
-        /** @var Container $container */
 
-        $middlewares = $this->getMockBuilder(MiddlewaresConfigurationInterface::class)->getMock();
-        $middlewares->method('getMiddlewares')->willReturn([
+        $middlewares = new MiddlewaresCollection([
             MiddlewareDispatcherTest_MiddlewareIncrement::class,
             MiddlewareDispatcherTest_MiddlewareDouble::class,
+            MiddlewareDispatcherTest_MiddlewareDecrement::class . ':10',
+            'increment',
+            'decrement:7',
         ]);
-        /** @var MiddlewaresConfigurationInterface $middlewares */
+
+        $middlewares->setMiddlewareAliases(new MiddlewareAliasRegistry(([
+            'increment' => MiddlewareDispatcherTest_MiddlewareIncrement::class,
+            'decrement' => MiddlewareDispatcherTest_MiddlewareDecrement::class,
+        ])));
 
         $middlewareDispatcher = new MiddlewarePipelineDispatcher($container);
         $result = $middlewareDispatcher->dispatch(
@@ -55,7 +60,7 @@ class MiddlewareDispatcherTest extends \PHPUnit\Framework\TestCase
                 return -$context;
             }
         );
-        $this->assertEquals($result, -(42 + 1) * 2);
+        $this->assertEquals($result, -((42 + 1) * 2 - 10 + 1 - 7));
     }
 
     public function testMiddlewaresAbortedChain()
@@ -95,6 +100,14 @@ class MiddlewareDispatcherTest_MiddlewareIncrement {
 
     public function handle($context, callable $next) {
         return $next($context + 1);
+    }
+
+}
+
+class MiddlewareDispatcherTest_MiddlewareDecrement {
+
+    public function handle($context, callable $next, $count = 1) {
+        return $next($context - $count);
     }
 
 }
