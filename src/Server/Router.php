@@ -7,6 +7,7 @@ use Upgate\LaravelJsonRpc\Contract\MiddlewareAliasRegistryInterface;
 use Upgate\LaravelJsonRpc\Contract\RouteInterface as RouteContract;
 use Upgate\LaravelJsonRpc\Contract\RouteRegistryInterface;
 use Upgate\LaravelJsonRpc\Exception\RouteNotFoundException;
+use function is_array;
 
 final class Router implements RouteRegistryInterface
 {
@@ -113,12 +114,16 @@ final class Router implements RouteRegistryInterface
     }
 
     /**
-     * @param MiddlewareAliasRegistryInterface|null $aliases
+     * @param array|MiddlewareAliasRegistryInterface|null $aliases
      * @return RouteRegistryInterface
      */
-    public function setMiddlewareAliases(MiddlewareAliasRegistryInterface $aliases = null): RouteRegistryInterface
+    public function setMiddlewareAliases($aliases = null): RouteRegistryInterface
     {
-        $this->middlewaresCollection->setMiddlewareAliases($aliases);
+        if (is_array($aliases)) {
+            $this->middlewaresCollection->addMiddlewareAliases($aliases);
+        } else {
+            $this->middlewaresCollection->setMiddlewareAliases($aliases);
+        }
 
         return $this;
     }

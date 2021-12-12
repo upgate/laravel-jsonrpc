@@ -25,6 +25,13 @@ class MiddlewareAliasLateBindingTest extends TestCase
         /** @var Container $container */
 
         $logger = $this->getMockBuilder(LoggerInterface::class)->getMock();
+        foreach (['emergency', 'alert', 'critical', 'error', 'log'] as $method) {
+            $logger->method($method)->will(
+                $this->returnCallback(function ($e) {
+                    throw new Exception((string)$e);
+                })
+            );
+        }
         /** @var LoggerInterface $logger */
 
         $this->server = new Server\Server(
@@ -36,14 +43,18 @@ class MiddlewareAliasLateBindingTest extends TestCase
         );
     }
 
-
-    public function testLateBinding()
+    public function testLateBindingForGroup(): void
     {
-        $this->server->router()->addMiddleware('abort')->bindController('test', MiddlewareAliasLateBindingTest_Controller::class);
-        $this->server->registerMiddlewareAliases(['abort' => MiddlewareAliasLateBindingTest_Abort::class]);
+        $this->server->router()
+            ->group(['abort'], function (Server\Router $router) {
+                $router->bindController('test', MiddlewareAliasLateBindingTest_Controller::class);
+            });
 
-        $this->server->setPayload(
-            json_encode(
+        $this->server->registerMiddlewareAliases([
+            'abort' => MiddlewareAliasLateBindingTest_Abort::class,
+        ]);
+
+        $response = $this->server->run(null, json_encode(
                 [
                     'jsonrpc' => '2.0',
                     'method'  => 'test',
@@ -51,8 +62,6 @@ class MiddlewareAliasLateBindingTest extends TestCase
                 ]
             )
         );
-
-        $response = $this->server->run();
 
         $expectedResponseData = (object)[
             'jsonrpc' => '2.0',

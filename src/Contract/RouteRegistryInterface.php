@@ -19,10 +19,10 @@ interface RouteRegistryInterface
     public function addMiddlewares(array $middlewares): RouteRegistryInterface;
 
     /**
-     * @param MiddlewareAliasRegistryInterface|null $aliases
+     * @param array|MiddlewareAliasRegistryInterface|null $aliases
      * @return $this
      */
-    public function setMiddlewareAliases(MiddlewareAliasRegistryInterface $aliases = null): RouteRegistryInterface;
+    public function setMiddlewareAliases($aliases = null): RouteRegistryInterface;
 
     /**
      * @param string $method

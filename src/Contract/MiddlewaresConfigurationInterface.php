@@ -35,4 +35,10 @@ interface MiddlewaresConfigurationInterface
      */
     public function addMiddleware(string $middleware): MiddlewaresConfigurationInterface;
 
+    /**
+     * @param array $aliases
+     * @return MiddlewaresConfigurationInterface
+     */
+    public function addMiddlewareAliases(array $aliases): MiddlewaresConfigurationInterface;
+
 }
