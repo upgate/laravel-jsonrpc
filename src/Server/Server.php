@@ -111,7 +111,7 @@ class Server implements ServerInterface, RequestExecutorInterface
      */
     public function registerMiddlewareAliases(array $aliases): ServerInterface
     {
-        $this->router->setMiddlewareAliases(new MiddlewareAliasRegistry($aliases));
+        $this->router->setMiddlewareAliases($aliases);
 
         return $this;
     }
