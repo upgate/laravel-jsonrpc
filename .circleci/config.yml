@@ -16,7 +16,7 @@ jobs:
                   key: dependency-cache-{{ checksum "composer.lock" }}
             - run:
                   name: composer-install
-                  command: composer install
+                  command: composer install --no-progress
             - save_cache:
                   key: dependency-cache-{{ checksum "composer.lock" }}
                   paths:
