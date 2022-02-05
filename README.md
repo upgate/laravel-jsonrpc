@@ -1,6 +1,6 @@
 # JSON-RPC Server for Laravel/Lumen
 
-[![Build Status](https://travis-ci.org/upgate/laravel-jsonrpc.svg?branch=master)](https://travis-ci.org/upgate/laravel-jsonrpc)
+[![Build Status](https://circleci.com/gh/upgate/laravel-jsonrpc.svg?style=shield)](https://app.circleci.com/pipelines/github/upgate/laravel-jsonrpc)
 
 ## Quick How-To
 
