@@ -1,0 +1,26 @@
+version: 2.1
+
+workflows:
+    version: 2
+    test:
+        jobs:
+            - test
+
+jobs:
+    test:
+        docker:
+            - image: composer:1.10.21 # PHP 8.0.3
+        steps:
+            - checkout
+            - restore_cache:
+                  key: dependency-cache-{{ checksum "composer.lock" }}
+            - run:
+                  name: composer-install
+                  command: composer install
+            - save_cache:
+                  key: dependency-cache-{{ checksum "composer.lock" }}
+                  paths:
+                      - ./vendor
+            - run:
+                  name: test
+                  command: ./vendor/bin/phpunit
