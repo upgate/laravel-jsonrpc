@@ -1,10 +1,11 @@
 # JSON-RPC Server for Laravel/Lumen
 
 [![Build Status](https://circleci.com/gh/upgate/laravel-jsonrpc.svg?style=shield)](https://app.circleci.com/pipelines/github/upgate/laravel-jsonrpc) [![StandWithUkraine](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/badges/StandWithUkraine.svg)]
+
 [![Stand With Ukraine](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/banner2-direct.svg)](https://vshymanskyy.github.io/StandWithUkraine/)
 
-### 📢 [Updates from Ukrainian Open Source Community](/docs/CommunityUpdates.md)
-### 🇷🇺 [Обращение к гражданам России](/docs/ToRussianPeople.md)
+### 📢 [Updates from Ukrainian Open Source Community](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine//docs/CommunityUpdates.md)
+### 🇷🇺 [Обращение к гражданам России](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine//docs/ToRussianPeople.md)
 
 ## Quick How-To
 
