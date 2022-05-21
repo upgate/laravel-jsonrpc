@@ -4,8 +4,8 @@
 
 [![Stand With Ukraine](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/banner2-direct.svg)](https://vshymanskyy.github.io/StandWithUkraine/)
 
-### 📢 [Updates from Ukrainian Open Source Community](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine//docs/CommunityUpdates.md)
-### 🇷🇺 [Обращение к гражданам России](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine//docs/ToRussianPeople.md)
+### 📢 [Updates from Ukrainian Open Source Community](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/docs/CommunityUpdates.md)
+### 🇷🇺 [Обращение к гражданам России](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/docs/ToRussianPeople.md)
 
 ## Quick How-To
 
