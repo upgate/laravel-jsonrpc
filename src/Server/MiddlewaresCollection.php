@@ -23,7 +23,7 @@ final class MiddlewaresCollection implements MiddlewaresConfigurationInterface
      * @param array $middlewares
      * @param MiddlewareAliasRegistryInterface $aliasesRegistry
      */
-    public function __construct(array $middlewares = [], MiddlewareAliasRegistryInterface $aliasesRegistry = null)
+    public function __construct(array $middlewares = [], ?MiddlewareAliasRegistryInterface $aliasesRegistry = null)
     {
         $this->middlewares = $middlewares;
         $this->setMiddlewareAliases($aliasesRegistry ?: new MiddlewareAliasRegistry());
@@ -71,7 +71,7 @@ final class MiddlewaresCollection implements MiddlewaresConfigurationInterface
      * @param MiddlewareAliasRegistryInterface|null $aliases
      * @return MiddlewaresConfigurationInterface
      */
-    public function setMiddlewareAliases(MiddlewareAliasRegistryInterface $aliases = null
+    public function setMiddlewareAliases(?MiddlewareAliasRegistryInterface $aliases = null
     ): MiddlewaresConfigurationInterface {
         $this->aliasesRegistry = $aliases;
 

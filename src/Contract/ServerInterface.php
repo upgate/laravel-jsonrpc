@@ -37,14 +37,14 @@ interface ServerInterface
      * @param string|null $controllerNamespace
      * @return $this
      */
-    public function setControllerNamespace(string $controllerNamespace = null): ServerInterface;
+    public function setControllerNamespace(?string $controllerNamespace = null): ServerInterface;
 
     /**
      * @param mixed $middlewareContext
      * @param string|null $payload
      * @return JsonResponse
      */
-    public function run($middlewareContext = null, string $payload = null): JsonResponse;
+    public function run($middlewareContext = null, ?string $payload = null): JsonResponse;
 
     /**
      * @param string $payload

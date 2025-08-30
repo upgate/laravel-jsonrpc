@@ -13,11 +13,11 @@ class BatchTest extends \PHPUnit\Framework\TestCase
     public function testBatch()
     {
         $requestFactory = $this->getMockBuilder(RequestFactoryInterface::class)->getMock();
+        $mockRequestArgs = new \WeakMap();
         $requestFactory->method('createRequest')->willReturnCallback(
-            function ($argument) {
+            function ($argument) use ($mockRequestArgs) {
                 $request = $this->getMockBuilder(RequestInterface::class)->getMock();
-                /** @noinspection PhpUndefinedFieldInspection */
-                $request->mockValue = $argument;
+                $mockRequestArgs[$request] = $argument;
 
                 return $request;
             }
@@ -26,9 +26,9 @@ class BatchTest extends \PHPUnit\Framework\TestCase
 
         $requestExecutor = $this->getMockBuilder(RequestExecutorInterface::class)->getMock();
         $requestExecutor->method('execute')->willReturnCallback(
-            function ($requestMock) {
+            function ($requestMock) use ($mockRequestArgs) {
                 $response = $this->getMockBuilder(Arrayable::class)->getMock();
-                $response->method('toArray')->willReturn($requestMock->mockValue->params);
+                $response->method('toArray')->willReturn($mockRequestArgs[$requestMock]->params);
 
                 return $response;
             }

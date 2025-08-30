@@ -11,7 +11,7 @@ final class ValidationFailedException extends JsonRpcException
 
     private $validationErrors;
 
-    public function __construct(Validator $validator, int $code = null)
+    public function __construct(Validator $validator, ?int $code = null)
     {
         parent::__construct(
             $this->getDefaultMessage(),

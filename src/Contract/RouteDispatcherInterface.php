@@ -13,12 +13,12 @@ interface RouteDispatcherInterface
      * @param RequestParams $requestParams
      * @return mixed
      */
-    public function dispatch(RouteInterface $route, RequestParams $requestParams = null);
+    public function dispatch(RouteInterface $route, ?RequestParams $requestParams = null);
 
     /**
      * @param string|null $controllerNamespace
      * @return $this
      */
-    public function setControllerNamespace(string $controllerNamespace = null): RouteDispatcherInterface;
+    public function setControllerNamespace(?string $controllerNamespace = null): RouteDispatcherInterface;
 
 }

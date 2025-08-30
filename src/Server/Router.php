@@ -24,7 +24,7 @@ final class Router implements RouteRegistryInterface
 
     private $middlewaresCollection;
 
-    public function __construct(MiddlewaresCollection $middlewaresCollection = null)
+    public function __construct(?MiddlewaresCollection $middlewaresCollection = null)
     {
         $this->middlewaresCollection = $middlewaresCollection ?: new MiddlewaresCollection();
     }

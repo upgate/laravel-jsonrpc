@@ -98,7 +98,7 @@ class Server implements ServerInterface, RequestExecutorInterface
      * @param string|null $controllerNamespace
      * @return ServerInterface
      */
-    public function setControllerNamespace(string $controllerNamespace = null): ServerInterface
+    public function setControllerNamespace(?string $controllerNamespace = null): ServerInterface
     {
         $this->routeDispatcher->setControllerNamespace($controllerNamespace);
 
@@ -130,7 +130,7 @@ class Server implements ServerInterface, RequestExecutorInterface
      * @param string|null $payload
      * @return JsonResponse
      */
-    public function run($middlewareContext = null, string $payload = null): JsonResponse
+    public function run($middlewareContext = null, ?string $payload = null): JsonResponse
     {
         $this->middlewareContext = $middlewareContext;
 
@@ -189,7 +189,7 @@ class Server implements ServerInterface, RequestExecutorInterface
      * @param RequestInterface|null $request
      * @return RequestResponse|null
      */
-    private function handleException(\Throwable $e, RequestInterface $request = null)
+    private function handleException(\Throwable $e, ?RequestInterface $request = null)
     {
         $handlerResult = $this->runExceptionHandlers($e, $request);
 
@@ -216,7 +216,7 @@ class Server implements ServerInterface, RequestExecutorInterface
      * @param RequestInterface $request
      * @return bool|RequestResponse
      */
-    private function runExceptionHandlers(\Throwable $e, RequestInterface $request = null)
+    private function runExceptionHandlers(\Throwable $e, ?RequestInterface $request = null)
     {
         foreach ($this->exceptionHandlers as $className => $handler) {
             if ($e instanceof $className) {

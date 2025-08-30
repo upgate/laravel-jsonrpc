@@ -31,7 +31,7 @@ class Request implements RequestContract, ExecutableInterface
      * @param RequestParams|null $params
      * @param string|int|null $id
      */
-    public function __construct(string $method, RequestParams $params = null, $id = null)
+    public function __construct(string $method, ?RequestParams $params = null, $id = null)
     {
         $this->method = (string)$method;
         $this->params = $params ?: RequestParams::constructEmpty();

@@ -26,7 +26,7 @@ final class FormRequestFactory
         $this->container = $container;
     }
 
-    public function makeFormRequest(string $formRequestClass, RequestParams $requestParams = null): FormRequest
+    public function makeFormRequest(string $formRequestClass, ?RequestParams $requestParams = null): FormRequest
     {
         if (!class_exists($formRequestClass)) {
             throw new \InvalidArgumentException("FormRequest class does not exist: '$formRequestClass'");
