@@ -10,7 +10,7 @@ class MiddlewareAliasRegistry implements MiddlewareAliasRegistryInterface
 
     private $registry = [];
 
-    public function __construct(array $aliases = null)
+    public function __construct(?array $aliases = null)
     {
         if ($aliases) {
             $this->registerAliases($aliases);

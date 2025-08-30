@@ -14,7 +14,7 @@ abstract class FormRequest implements \ArrayAccess
      * @param RequestParams|null $requestParams
      * @return $this
      */
-    public function setRequestParams(RequestParams $requestParams = null): FormRequest
+    public function setRequestParams(?RequestParams $requestParams = null): FormRequest
     {
         $this->params = $requestParams;
 

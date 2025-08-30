@@ -206,7 +206,7 @@ class ServerTest extends \PHPUnit\Framework\TestCase
 
         $server->onException(
             Throwable::class,
-            function (\Throwable $e, Server\Request $request = null) use (&$throwable) {
+            function (\Throwable $e, ?Server\Request $request = null) use (&$throwable) {
                 $throwable = $e;
                 return Server\RequestResponse::constructErrorResponse($request ? $request->getId() : null, $e->getMessage(), $e->getCode());
             }
@@ -246,7 +246,7 @@ class ServerTest extends \PHPUnit\Framework\TestCase
 
         $server->onException(
             Throwable::class,
-            function (\Throwable $e, Server\Request $request = null) use (&$throwable) {
+            function (\Throwable $e, ?Server\Request $request = null) use (&$throwable) {
                 $throwable = $e;
                 return Server\RequestResponse::constructErrorResponse($request ? $request->getId() : null, $e->getMessage(), $e->getCode());
             }

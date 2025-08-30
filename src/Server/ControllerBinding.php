@@ -13,7 +13,7 @@ final class ControllerBinding extends Binding
     public function __construct(
         string $binding,
         MiddlewaresCollection $middlewaresCollection,
-        string $defaultActionName = null
+        ?string $defaultActionName = null
     ) {
         parent::__construct($binding, $middlewaresCollection);
         $this->defaultActionName = $defaultActionName;

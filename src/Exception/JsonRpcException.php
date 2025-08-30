@@ -6,7 +6,7 @@ namespace Upgate\LaravelJsonRpc\Exception;
 abstract class JsonRpcException extends \RuntimeException
 {
 
-    public function __construct(string $message = "", int $code = 0, \Exception $previous = null)
+    public function __construct(string $message = "", int $code = 0, ?\Exception $previous = null)
     {
         parent::__construct(
             $message ?: $this->getDefaultMessage(),

@@ -35,7 +35,7 @@ final class RouteDispatcher implements RouteDispatcherInterface
      * @param Container $container
      * @param string|null $controllerNamespace
      */
-    public function __construct(Container $container, string $controllerNamespace = null)
+    public function __construct(Container $container, ?string $controllerNamespace = null)
     {
         $this->container = $container;
         $this->formRequestFactory = new FormRequestFactory($container);
@@ -46,7 +46,7 @@ final class RouteDispatcher implements RouteDispatcherInterface
      * @param string|null $controllerNamespace
      * @return RouteDispatcherInterface
      */
-    public function setControllerNamespace(string $controllerNamespace = null): RouteDispatcherInterface
+    public function setControllerNamespace(?string $controllerNamespace = null): RouteDispatcherInterface
     {
         $this->controllerNamespace = $controllerNamespace;
 
@@ -58,7 +58,7 @@ final class RouteDispatcher implements RouteDispatcherInterface
      * @param RequestParams $requestParams
      * @return mixed
      */
-    public function dispatch(RouteInterface $route, RequestParams $requestParams = null)
+    public function dispatch(RouteInterface $route, ?RequestParams $requestParams = null)
     {
         $controllerClass = $route->getControllerClass();
         if ($this->controllerNamespace && substr($controllerClass, 0, 1) !== '\\') {
@@ -80,7 +80,7 @@ final class RouteDispatcher implements RouteDispatcherInterface
      * @param RequestParams $requestParams
      * @return mixed
      */
-    private function executeMethod($controller, ReflectionMethod $method, RequestParams $requestParams = null)
+    private function executeMethod($controller, ReflectionMethod $method, ?RequestParams $requestParams = null)
     {
         $params = null;
         $areParamsNamed = null;
@@ -170,7 +170,7 @@ final class RouteDispatcher implements RouteDispatcherInterface
      * @param RequestParams|null $requestParams
      * @return FormRequest
      */
-    private function makeFormRequest(string $formRequestClass, RequestParams $requestParams = null): FormRequest
+    private function makeFormRequest(string $formRequestClass, ?RequestParams $requestParams = null): FormRequest
     {
         $formRequest = $this->formRequestFactory->makeFormRequest($formRequestClass, $requestParams);
         $validator = $this->formRequestFactory->makeValidator($formRequest);

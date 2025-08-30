@@ -10,7 +10,7 @@ interface MiddlewaresConfigurationInterface
      * @param MiddlewareAliasRegistryInterface|null $aliases
      * @return $this
      */
-    public function setMiddlewareAliases(MiddlewareAliasRegistryInterface $aliases = null
+    public function setMiddlewareAliases(?MiddlewareAliasRegistryInterface $aliases = null
     ): MiddlewaresConfigurationInterface;
 
     /**
