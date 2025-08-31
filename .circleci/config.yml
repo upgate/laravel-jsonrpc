@@ -4,21 +4,39 @@ workflows:
     version: 2
     test:
         jobs:
-            - test
+            - test80
+            - test84
 
 jobs:
-    test:
+    test80:
         docker:
             - image: composer:1.10.21 # PHP 8.0.3
         steps:
             - checkout
             - restore_cache:
-                  key: dependency-cache-{{ checksum "composer.lock" }}
+                  key: dependency-cache80-{{ checksum "composer.lock" }}
             - run:
                   name: composer-install
                   command: composer install --no-progress
             - save_cache:
-                  key: dependency-cache-{{ checksum "composer.lock" }}
+                  key: dependency-cache80-{{ checksum "composer.lock" }}
+                  paths:
+                      - ./vendor
+            - run:
+                  name: test
+                  command: ./vendor/bin/phpunit
+    test84:
+        docker:
+            - image: composer:2.8.11 # PHP 8.4
+        steps:
+            - checkout
+            - restore_cache:
+                  key: dependency-cache84-{{ checksum "composer.lock" }}
+            - run:
+                  name: composer-install
+                  command: composer install --no-progress
+            - save_cache:
+                  key: dependency-cache84-{{ checksum "composer.lock" }}
                   paths:
                       - ./vendor
             - run:
