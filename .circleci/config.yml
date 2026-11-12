@@ -13,15 +13,9 @@ jobs:
             - image: composer:1.10.21 # PHP 8.0.3
         steps:
             - checkout
-            - restore_cache:
-                  key: dependency-cache80-{{ checksum "composer.lock" }}
             - run:
                   name: composer-install
                   command: composer install --no-progress
-            - save_cache:
-                  key: dependency-cache80-{{ checksum "composer.lock" }}
-                  paths:
-                      - ./vendor
             - run:
                   name: test
                   command: ./vendor/bin/phpunit
@@ -30,15 +24,9 @@ jobs:
             - image: composer:2.8.11 # PHP 8.4
         steps:
             - checkout
-            - restore_cache:
-                  key: dependency-cache84-{{ checksum "composer.lock" }}
             - run:
                   name: composer-install
                   command: composer install --no-progress
-            - save_cache:
-                  key: dependency-cache84-{{ checksum "composer.lock" }}
-                  paths:
-                      - ./vendor
             - run:
                   name: test
                   command: ./vendor/bin/phpunit
